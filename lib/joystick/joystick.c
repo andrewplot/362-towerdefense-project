@@ -3,9 +3,9 @@
 #include "hardware/adc.h"
 #include "hardware/gpio.h"
 
-#define X_PIN 26   // X-axis to GPIO15 (channel 0)
-#define Y_PIN 27   // Y-axis to GPIO16 (channel 1)
-#define SW_PIN 28  // Switch to GPIO17
+#define X_PIN 40   // X-axis to GPIO40 (channel 0)
+#define Y_PIN 41   // Y-axis to GPIO41 (channel 1)
+#define SW_PIN 42  // Switch to GPIO42
 
 void joystick_init(void){
     adc_init();

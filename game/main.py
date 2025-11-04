@@ -1,17 +1,25 @@
-class Enemy:
-    def __init__(self, enemy_type, path):
-        self.type = enemy_type
-        self.hp = 10 if enemy_type == "basic" else 20
-        self.speed = 1 if enemy_type == "basic" else 0.5
-        self.position = 0  # index along the path
-        self.path = path
+from game import Game
+import time
 
-    def move(self):
-        self.position += self.speed
-        if self.position >= len(self.path):
-            return True  # reached the end
-        return False
+def simulate_rfid_scan():
+    # simulated rfid tower selection
+    print("[RFID] Tower selected: BasicTower")
+    return "BasicTower"
 
-    def take_damage(self, damage):
-        self.hp -= damage
-        return self.hp <= 0  # returns True if dead
+def main():
+    game = Game()
+    selected_tower = simulate_rfid_scan()
+
+    # placeholder starter tower
+    game.add_tower(selected_tower, 6)
+
+    #game loop
+    while not game.is_game_over():
+        game.update()
+        time.sleep(0.3)
+
+    print("Game Over!")
+
+if __name__ == "__main__":
+    main()
+

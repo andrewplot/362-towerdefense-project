@@ -1,5 +1,7 @@
 {
     "files.associations": {
+        "pin-definitions.h": "c",
+        "color.h": "c",
         "spi.h": "c",
         "adc.h": "c"
     }

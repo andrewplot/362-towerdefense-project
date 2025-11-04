@@ -1,0 +1,4 @@
+(fp_lib_table
+  (version 7)
+  (lib (name "Adafruit RGB Matrix Bonnet")(type "KiCad")(uri "$(KIPRJMOD)/Adafruit RGB Matrix Bonnet.pretty")(options "")(descr ""))
+)

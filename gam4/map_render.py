@@ -2,7 +2,7 @@
 Map Renderer for Tower Defense Game
 Draws map data to the LED matrix
 """
-
+import random
 class MapRenderer:
     """Draws map data to the LED matrix"""
     # Color definitions
@@ -11,6 +11,7 @@ class MapRenderer:
     TOWER_SELECTION_COLOR = (255, 215, 0)
     SPAWN_COLOR = (255, 255, 0)       # Yellow spawn
     END_COLOR = (255, 0, 255)         # Magenta end
+    # VARIATION = 5
     
     # Decoration colors
     TREE_COLOR = (0, 100, 0)
@@ -28,11 +29,32 @@ class MapRenderer:
         """
         self.matrix = matrix
         self.map_data = map_data
+        self.background_dat = None #caches background
+        self._generate_background()
     
+    def _generate_background(self):
+        """Generate the background with variations once"""
+        variation = 5
+        base_r, base_g, base_b = self.map_data.background_color
+        self.background_pixels = []
+        
+        for y in range(self.matrix.height):
+            row = []
+            for x in range(self.matrix.width):
+                r = max(0, min(255, base_r + random.randint(-variation, variation)))
+                g = max(0, min(255, base_g + random.randint(-variation, variation)))
+                b = max(0, min(255, base_b + random.randint(-variation, variation)))
+                row.append((r, g, b))
+            self.background_pixels.append(row)
+
     def draw_background(self):
-        """Draw the background color"""
-        r, g, b = self.map_data.background_color
-        self.matrix.fill_rect(0, 0, self.matrix.width, self.matrix.height, r, g, b)
+        """Draw the cached background color"""
+        for y in range(self.matrix.height):
+            for x in range(self.matrix.width):
+                r, g, b = self.background_pixels[y][x]
+                self.matrix.fill_rect(x, y, 1, 1, r, g, b)
+            # r, g, b = self.map_data.background_color
+            # self.matrix.fill_rect(0, 0, self.matrix.width, self.matrix.height, r, g, b)
     
     def draw_decorations(self):
         """Draw decorative elements (trees, rocks, etc)"""

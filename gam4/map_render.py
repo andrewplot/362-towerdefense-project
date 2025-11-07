@@ -68,7 +68,7 @@ class MapRenderer:
             if y1 == y2:  #horizontal path
                 self.matrix.draw_line(x1, y1 - 1, x2, y2 - 1, *self.PATH_COLOR)
                 self.matrix.draw_line(x1, y1 + 1, x2, y2 + 1, *self.PATH_COLOR)
-            else:  # vertical path
+            else:  # vertical pathp
                 self.matrix.draw_line(x1 - 1, y1, x2 - 1, y2, *self.PATH_COLOR)
                 self.matrix.draw_line(x1 + 1, y1, x2 + 1, y2, *self.PATH_COLOR)
     

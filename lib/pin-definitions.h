@@ -1,6 +1,9 @@
 #ifndef PIN_DEFINITIONS_H
 #define PIN_DEFINITIONS_H
 
+/* DO NOT CHANGE!!! */
+/* This is going to be finalized with the PCB */
+
 // SPI for OLED
 #define OLED_SPI_CSn 1
 #define OLED_SPI_SCK 2

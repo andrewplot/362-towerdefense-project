@@ -14,7 +14,7 @@ class MapRenderer:
     # VARIATION = 5
     
     # Decoration colors
-    TREE_COLOR = (0, 100, 0)
+    TREE_COLOR = (0, 80, 0)
     TREETRUNK_COLOR = (100, 50, 0)
     ROCK_COLOR = (75, 75, 75)
     LAKE_COLOR = (0, 0, 150)

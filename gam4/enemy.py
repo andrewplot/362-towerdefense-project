@@ -4,8 +4,8 @@ class Enemy:
     ENEMY_TYPES = {
         "basic": {
             "health": 1,
-            "speed": 5,
-            "color": (255, 50, 50),
+            "speed": 3,
+            "color": (200, 20, 20),
             "reward": 1,
             "damage": 1,
             "size": 1

@@ -3,10 +3,12 @@
 #include "pico/stdlib.h"
 #include "hardware/adc.h"
 #include "joystick.h"
+#include "rfid_reader.h"
 
 int main() {
     stdio_init_all();      // sets up UART for printf (115200 baud by default)
     joystick_init();       // sets up ADC on GPIO26/27 and pull-up on GPIO28
+    pn532_i2c_init();
 
     while (1) {
         // read raw X

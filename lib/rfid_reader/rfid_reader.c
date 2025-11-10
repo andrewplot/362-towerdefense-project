@@ -8,7 +8,7 @@
 
 // In pn532_i2c.c, replace the pn532_i2c_init() function:
 #define PN532_SDA_PIN           4    // GPIO 4 has I2C0 SDA (F3 function)
-#define PN532_SCL_PIN           5    // GPIO 5 has I2C0 SCL (F3 function)
+#define PN532_SCL_PIN           1    // GPIO 5 and 1 has I2C0 SCL (F3 function)
 #define PN532_I2C_PORT          i2c0
 
 

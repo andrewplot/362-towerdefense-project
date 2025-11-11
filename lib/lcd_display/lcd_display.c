@@ -3,11 +3,7 @@
 #include "hardware/dma.h"
 #include "hardware/gpio.h"
 #include "lcd_display.h"
-
-const int SPI_DISP_SCK = 26; // Replace with your SCK pin number for the LCD/OLED display
-const int SPI_DISP_CSn = 25; // Replace with your CSn pin number for the LCD/OLED display
-const int SPI_DISP_TX = 27; // Replace with your TX pin number for the LCD/OLED display
-
+#include "../pin-definitions.h"
 
 void init_chardisp_pins() {
     spi_init(spi1, 10000);

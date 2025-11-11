@@ -2,9 +2,9 @@
 #define PIN_DEFINITIONS_H
 
 // SPI for OLED
-#define OLED_SPI_CSn 1
-#define OLED_SPI_SCK 2
-#define OLED_SPI_TX  3
+const int SPI_DISP_SCK = 26;
+const int SPI_DISP_CSn = 25;
+const int SPI_DISP_TX = 27;
 
 // LED Matrix
 #define R1  5

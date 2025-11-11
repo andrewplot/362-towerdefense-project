@@ -5,14 +5,15 @@
 #include <stdbool.h>
 #include "hardware/i2c.h"
 
-#define PN532_DEFAULT_I2C_ADDR 0x24  // change if your scan shows different
+#define PN532_DEFAULT_I2C_ADDR 0x24
+  // change if your scan shows different
 
 typedef struct {
-    const i2c_inst_t *i2c;
+    i2c_inst_t *i2c;  // Removed const qualifier to match SDK functions
     uint8_t addr7;
 } pn532_t;
 
-void pn532_init(pn532_t *dev, const i2c_inst_t *i2c, uint8_t addr7);
+void pn532_init(pn532_t *dev, i2c_inst_t *i2c, uint8_t addr7);
 
 uint32_t pn532_get_firmware_version(pn532_t *dev);
 

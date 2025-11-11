@@ -1,8 +1,8 @@
 #ifndef MATRIX_H
 #define MATRIX_H
 
-#include "../tower/tower.h"
-#include "color.h"
+#include "../tower/tower.hh"
+#include "color.hh"
 
 
 /*  NOTES:

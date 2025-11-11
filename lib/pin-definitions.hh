@@ -33,9 +33,7 @@
 #define JOYSTICK_X 40
 #define JOYSTICK_Y 41
 #define JOYSTICK_SW 42
-#define ADC_MAX 4095
-#define CENTER 2048
-#define DEADZONE_PERCENT 50
+
 
 // House LED
 #define LED 48

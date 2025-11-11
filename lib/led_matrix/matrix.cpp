@@ -1,11 +1,11 @@
-#include "matrix.h"
+#include "matrix.hh"
 #include <math.h>
 #include <stdio.h>
 #include "hardware/gpio.h"
 #include "pico/stdlib.h"
 
-#include "sprites.h"
-#include "../pin-definitions.h"
+#include "sprites.hh"
+#include "../pin-definitions.hh"
 
 
 #define MATRIX_ROWS 32
@@ -123,7 +123,7 @@ void render_frame() {
 void set_towers(Tower* towers) {
     for (int i = 0; i < 13; i++) {
         Tower tower = towers[i];
-        Color* sprite = get_sprite(tower.type);
+        const Color* sprite = get_sprite(tower.type);
 
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 3; col++) {
@@ -134,7 +134,7 @@ void set_towers(Tower* towers) {
 }
 
 void set_tower(Tower tower) {
-    Color* sprite = get_sprite(tower.type);
+    const Color* sprite = get_sprite(tower.type);
 
     for (int row = 0; row < 3; row++) {
         for (int col = 0; col < 3; col++) {
@@ -190,7 +190,7 @@ void set_path() {
 }
 
 void set_tree(int x, int y) {
-    Color* sprite = get_sprite_tree();
+    const Color* sprite = get_sprite_tree();
 
     for (int row = 0; row < 5; row++) {
         for (int col = 0; col < 3; col++) {

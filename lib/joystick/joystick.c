@@ -19,8 +19,9 @@ int sample_js_x(void){
     adc_select_input(0);
     uint16_t value = adc_read();
 
-    if (value > 3200) return 1;
-    else if (value < 900) return -1;
+    int deadzone = (ADC_MAX / 2) * DEADZONE_PERCENT / 100;
+    if (value > CENTER + deadzone) return 1;   // right
+    else if (value < CENTER - deadzone) return -1;  // left
     else return 0;
 }
 
@@ -28,8 +29,9 @@ int sample_js_y(void){
     adc_select_input(1);
     uint16_t value = adc_read();
 
-    if (value > 3200) return 1;
-    else if (value < 900) return -1;
+    int deadzone = (ADC_MAX / 2) * DEADZONE_PERCENT / 100;
+    if (value > CENTER + deadzone) return 1;   // up
+    else if (value < CENTER - deadzone) return -1;  // down
     else return 0;
 }
 

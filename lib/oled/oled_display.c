@@ -26,29 +26,29 @@ void init_oled() {
 }
 
 
-void send_spi_cmd(spi_inst_t* spi, uint16_t value) {
+void send_spi_cmd(spi_inst_t* spi, int value) {
     while (spi_is_busy(spi)) {
         tight_loop_contents();
     }
     spi_get_hw(spi)->dr = value;
 }
 
-void send_spi_data(spi_inst_t* spi, uint16_t value) {
-    uint16_t data_value = 0x200 | value;
+void send_spi_data(spi_inst_t* spi, int value) {
+    int data_value = 0x200 | value;
     while (spi_is_busy(spi)) {
         tight_loop_contents();
     }
     spi_get_hw(spi)->dr = data_value;
 }
 
-void cd_write_line(uint8_t row, const char *s) {
-    uint16_t addr_cmd = (row == 0) ? 0x80 : 0xC0;
+void cd_write_line(int row, const char *s) {
+    int addr_cmd = (row == 0) ? 0x80 : 0xC0;
     send_spi_cmd(spi1, addr_cmd);
     sleep_ms(50);
 
-    for (int i = 0; i < 16; ++i) {
-        char c = (s && s[i]) ? s[i] : ' ';
-        send_spi_data(spi1, (uint8_t)c);
+    for (int i = 0; i < 16; i++) {
+        char c = (s && s[i]) ? s[i] : ' '; // checks if character is valid or a null (space)
+        send_spi_data(spi1, (int)c);
     }
 }
 

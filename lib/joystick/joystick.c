@@ -19,8 +19,8 @@ int sample_js_x(void){
     adc_select_input(0);
     uint16_t value = adc_read();
 
-    if (value > 3200) return 1;
-    else if (value < 900) return -1;
+    if (value > 3800) return 1;
+    else if (value < 200) return -1;
     else return 0;
 }
 
@@ -28,8 +28,8 @@ int sample_js_y(void){
     adc_select_input(1);
     uint16_t value = adc_read();
 
-    if (value > 3200) return 1;
-    else if (value < 900) return -1;
+    if (value > 3800) return 1;
+    else if (value < 200) return -1;
     else return 0;
 }
 

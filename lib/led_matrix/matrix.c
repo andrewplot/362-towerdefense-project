@@ -4,10 +4,8 @@
 #include "hardware/gpio.h"
 #include "pico/stdlib.h"
 
-#include "color.h"
 #include "sprites.h"
 #include "../pin-definitions.h"
-#include "../tower/tower.h"
 
 
 #define MATRIX_ROWS 32
@@ -98,32 +96,28 @@ void set_rgb_pins(int row, int col, int plane) {
     my_gpio_put(B2, ((bottom_b >> plane) & 0x1));
 }
 
-void render() {
+void render_frame() {
     reset_row_sel();
 
-    for(;;) {
-        for (int plane = 5; plane >= 0; plane--) {
-            for (int row = 0; row <  MATRIX_ROWS / 2; row++) {
-                sio_hw->gpio_set = (1u << OE);
-                sio_hw->gpio_set = (1u << 25);
-                
-                set_row_pins(row);
-                
-                for (int col = 0; col < MATRIX_COLS; col++) {
-                    set_rgb_pins(row, col, plane);
-                    pulse_pin(CLK, 3);
-                }
-
-                pulse_pin(LAT, 3);
-                sio_hw->gpio_clr = (1u << OE);
-                sio_hw->gpio_clr = (1u << 25);
-                
-                sleep_us(2 * (1 << plane));
+    for (int plane = 5; plane >= 0; plane--) {
+        for (int row = 0; row <  MATRIX_ROWS / 2; row++) {
+            sio_hw->gpio_set = (1u << OE);
+            sio_hw->gpio_set = (1u << 25);
+            
+            set_row_pins(row);
+            
+            for (int col = 0; col < MATRIX_COLS; col++) {
+                set_rgb_pins(row, col, plane);
+                pulse_pin(CLK, 3);
             }
-        
+
+            pulse_pin(LAT, 3);
+            sio_hw->gpio_clr = (1u << OE);
+            sio_hw->gpio_clr = (1u << 25);
+            
+            sleep_us(6 * (1 << plane));
         }
     }
-
 }
 
 void set_towers(Tower* towers) {
@@ -136,6 +130,16 @@ void set_towers(Tower* towers) {
                 framebuffer[row + tower.x_pos][col + tower.y_pos] = sprite[row * 3 + col];
             }
         }
+    }
+}
+
+void set_tower(Tower tower) {
+    Color* sprite = get_sprite(tower.type);
+
+    for (int row = 0; row < 3; row++) {
+        for (int col = 0; col < 3; col++) {
+            framebuffer[row + tower.x_pos][col + tower.y_pos] = sprite[row * 3 + col];
+            }
     }
 }
 

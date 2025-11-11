@@ -5,6 +5,41 @@
 #include "oled_display.h"
 #include "../pin-definitions.h"
 
+static const uint8_t heart[8] = {
+    0b00000,
+    0b01010,
+    0b11111,
+    0b11111,
+    0b01110,
+    0b00100,
+    0b00000,
+    0b00000
+};
+
+
+void oled_write_char(uint8_t row, uint8_t col, uint8_t ch) {
+    uint8_t addr = (row == 0 ? 0x80 : 0xC0) + col;
+    send_spi_cmd(spi1, addr);
+    send_spi_data(spi1, ch);
+}
+
+void demo_heart() {
+    oled_create_char(0, heart); // store heart at slot 0
+    oled_write_char(0, 0, 'I');
+    oled_write_char(0, 1, ' ');
+    oled_write_char(0, 2, 0);   // custom heart char
+    oled_write_char(0, 3, ' ');
+    oled_write_char(0, 4, 'U');
+}
+
+void oled_create_char(uint8_t location, const uint8_t *pattern) {
+    location &= 0x07; // valid: 0–7
+    send_spi_cmd(spi1, 0x40 | (location << 3)); // set CGRAM address
+    for (int i = 0; i < 8; i++) {
+        send_spi_data(spi1, pattern[i]);
+    }
+}
+
 void init_oled_pins() {
     spi_init(spi1, 10000);
     spi_set_format(spi1, 10, SPI_CPOL_0, SPI_CPHA_0, SPI_MSB_FIRST);

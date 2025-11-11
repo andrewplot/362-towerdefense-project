@@ -1,4 +1,3 @@
-from SpotifyClass import SpotifyUser
 from letters import letters_temp
 
 from datetime import datetime

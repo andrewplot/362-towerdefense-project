@@ -1,0 +1,17 @@
+tower types: 
+    regular -> -> +range -> +penetration
+    splash -> +splash
+    camo/lead targetting
+
+enemy types:
+    regular red
+    fast white that splits into reds
+    higher health blues
+    lead
+    moab
+
+maps:
+    some kind of water that requires building rafts for towers?
+
+other:
+    ability to place towers anywhere

@@ -57,7 +57,7 @@ class Enemy:
             return True
         
         # Get current target waypoint
-        target_x, target_y = self.path[self.path_index + 1]
+        target_x, target_y = self.path[self.path_index + 1] 
         
         # Calculate direction to target
         dx = target_x - self.x

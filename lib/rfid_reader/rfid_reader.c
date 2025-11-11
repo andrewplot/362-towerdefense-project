@@ -1,37 +1,53 @@
+#include <stdio.h>
 #include "pico/stdlib.h"
-#include "hardware/adc.h"
 #include "hardware/i2c.h"
-#include "hardware/spi.h"
+#include "rfid_reader.h"
+#include "pn532.h"
 
-
-
-
-// In pn532_i2c.c, replace the pn532_i2c_init() function:
-#define PN532_SDA_PIN           4    // GPIO 4 has I2C0 SDA (F3 function)
-#define PN532_SCL_PIN           1    // GPIO 5 and 1 has I2C0 SCL (F3 function)
-#define PN532_I2C_PORT          i2c0
-
+static pn532_t pn532;
+static bool pn532_ready = false;
 
 void pn532_i2c_init(void) {
-    // Initialize I2C0 at 100kHz
-    i2c_init(PN532_I2C_PORT, 100 * 1000);
-    
-    // Configure GPIO pins for I2C
-    gpio_set_function(PN532_SDA_PIN, GPIO_FUNC_I2C);
-    gpio_set_function(PN532_SCL_PIN, GPIO_FUNC_I2C);
-    
-    // Enable pull-ups
-    gpio_pull_up(PN532_SDA_PIN);
-    gpio_pull_up(PN532_SCL_PIN);
-    
-    printf("PN532 I2C initialized on GPIO%d (SDA) and GPIO%d (SCL)\n", 
-           PN532_SDA_PIN, PN532_SCL_PIN);
+    const uint SDA_PIN = 4;
+    const uint SCL_PIN = 5;
+    const uint SPEED_HZ = 100000;
+
+    // Setup I2C0 on pins 4/5
+    gpio_set_function(SDA_PIN, GPIO_FUNC_I2C);
+    gpio_set_function(SCL_PIN, GPIO_FUNC_I2C);
+    gpio_pull_up(SDA_PIN);
+    gpio_pull_up(SCL_PIN);
+    i2c_init(i2c0, SPEED_HZ);
+
+    // Init PN532 struct
+    pn532_init(&pn532, i2c0, PN532_DEFAULT_I2C_ADDR);
+
+    sleep_ms(50);
+
+    // Check firmware
+    uint32_t ver = pn532_get_firmware_version(&pn532);
+    if (ver == 0) {
+        printf("PN532: not found (check wiring, address, I2C mode switch)\r\n");
+        pn532_ready = false;
+        return;
+    }
+
+    printf("PN532: found. IC=0x%02X, FW=%u.%u\r\n",
+           (unsigned)((ver >> 24) & 0xFF),
+           (unsigned)((ver >> 16) & 0xFF),
+           (unsigned)((ver >> 8) & 0xFF));
+
+    if (!pn532_sam_config(&pn532)) {
+        printf("PN532: SAMConfig failed\r\n");
+        pn532_ready = false;
+        return;
+    }
+
+    printf("PN532: ready (I2C)\r\n");
+    pn532_ready = true;
 }
 
-// Replace pn532_reset() function:
-void pn532_reset(void) {
-    // No hardware reset pin available on 4-pin I2C modules
-    // PN532 will auto-wake from I2C communication
-    sleep_ms(500);
-    printf("PN532 wake-up delay complete\n");
+bool pn532_read_uid(uint8_t *uid, uint8_t *uid_len) {
+    if (!pn532_ready) return false;
+    return pn532_read_passive_target(&pn532, uid, uid_len, 200); // 200 ms poll
 }

@@ -7,6 +7,19 @@
 static pn532_t pn532;
 static bool pn532_ready = false;
 
+
+static void i2c_scan_debug(void) {
+    printf("I2C scan:\r\n");
+    for (uint8_t addr = 1; addr < 127; addr++) {
+        // zero-length write: just see if someone ACKs this address
+        int ret = i2c_write_blocking(i2c0, addr, NULL, 0, false);
+        if (ret >= 0) {
+            printf(" - Found device at 0x%02X\r\n", addr);
+        }
+    }
+}
+
+
 void pn532_i2c_init(void) {
     const uint SDA_PIN = 4;
     const uint SCL_PIN = 5;

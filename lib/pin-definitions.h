@@ -4,11 +4,6 @@
 /* DO NOT CHANGE!!! */
 /* This is going to be finalized with the PCB */
 
-// SPI for OLED
-#define OLED_SPI_CSn 1
-#define OLED_SPI_SCK 2
-#define OLED_SPI_TX  3
-
 // LED Matrix
 #define R1  5
 #define B1  6
@@ -24,6 +19,11 @@
 #define CLK 17
 #define LAT 18
 #define OE  19
+
+// SPI for OLED
+#define OLED_SPI_CSn 25
+#define OLED_SPI_SCK 26
+#define OLED_SPI_TX  27
 
 // I2C for RFID
 #define RFID_SCL 31

@@ -383,10 +383,11 @@ uint32_t pn532_get_firmware_version(pn532_t *dev) {
 #if DEBUG_PN532
     printf("pn532_get_firmware_version: starting\r\n");
 #endif
-
+    
     // Try Method 1: Standard approach with wake-up
     printf("Method 1: Standard with wake-up\r\n");
     if (send_command(dev, PN532_CMD_GETFIRMWAREVERSION, NULL, 0)) {
+         sleep_ms(100);
         if (read_ack(dev, 1000)) {
             uint8_t buf[8];
             if (read_response(dev, PN532_CMD_GETFIRMWAREVERSION, buf, sizeof(buf), 1000)) {

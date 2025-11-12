@@ -6,6 +6,7 @@ from map_render import MapRenderer
 from enemy import Enemy
 from tower import Tower
 from ability import AbilityManager
+from banner_plane import BannerPlane
 import math
 
 
@@ -32,6 +33,9 @@ class Game:
         
         # Ability system
         self.ability_manager = AbilityManager()
+        
+        # Banner plane (for wave announcements)
+        self.banner_plane = None
         
         # Spawned enemies that need to be added (for splitters)
         self.pending_spawns = []
@@ -77,6 +81,16 @@ class Game:
             progress += math.sqrt((x - wx)**2 + (y - wy)**2)
         
         return progress
+    
+    def spawn_banner_plane(self, wave_number):
+        """
+        Spawn a banner plane to announce a wave
+        
+        Args:
+            wave_number: Wave number to display on banner
+        """
+        self.banner_plane = BannerPlane(-45, 16, self.game_time, wave_number)
+        return self.banner_plane
     
     def place_tower(self, tower_type, x, y):
         """
@@ -170,6 +184,10 @@ class Game:
         
         self.game_time += dt
         
+        # Update banner plane
+        if self.banner_plane and self.banner_plane.active:
+            self.banner_plane.update(dt)
+        
         # Update radar detection
         self.update_radar_detection()
         
@@ -226,6 +244,10 @@ class Game:
         
         # Draw abilities (on top layer)
         self.ability_manager.draw(self.matrix)
+        
+        # Draw banner plane (on top of everything)
+        if self.banner_plane and self.banner_plane.active:
+            self.banner_plane.draw(self.matrix)
     
     def handle_click(self, matrix_x, matrix_y):
         """Handle click for tower placement"""

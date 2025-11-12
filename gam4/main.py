@@ -46,11 +46,17 @@ def main():
     print("\nABILITIES:")
     print("  A = Apache Strike ($50)")
     print("  B = Bomber Run ($75)")
+    print("\nBANNER PLANE:")
+    print("  N = Spawn banner plane (for testing)")
+    print("      Format: 'WAVE X' where X is 0-9")
     print("\nOTHER:")
     print("  T = Toggle tower ranges")
     print("  Click = Place selected tower")
     print("  ESC = Quit")
     print("\n===============================\n")
+    
+    # For banner testing
+    current_test_wave = 1
     
     while running:
         dt = clock.get_time() / 1000.0
@@ -103,6 +109,14 @@ def main():
                     else:
                         print("Can't activate Bomber (cost: $75, cooldown or insufficient funds)")
                 
+                # Banner plane (testing)
+                elif event.key == pygame.K_n:
+                    game.spawn_banner_plane(current_test_wave)
+                    print(f"Banner plane spawned: WAVE {current_test_wave}")
+                    current_test_wave += 1
+                    if current_test_wave > 9:
+                        current_test_wave = 1
+                
                 # Toggle ranges
                 elif event.key == pygame.K_t:
                     game.show_tower_ranges = not game.show_tower_ranges
@@ -127,9 +141,11 @@ def main():
         
         tower_type_name = game.selected_tower_type if game.selected_tower_type else "None"
         
+        banner_status = "FLYING" if (game.banner_plane and game.banner_plane.active) else "---"
+        
         pygame.display.set_caption(
             f"TD | ${game.money} | Lives:{game.lives} | Score:{game.score} | "
-            f"Selected:{tower_type_name} | Apache:{apache_cd:.1f}s | Bomber:{bomber_cd:.1f}s"
+            f"Selected:{tower_type_name} | Apache:{apache_cd:.1f}s | Bomber:{bomber_cd:.1f}s | Banner:{banner_status}"
         )
         
         if not matrix.update_display():

@@ -4,7 +4,7 @@ import math
 class Projectile:
     """Represents a projectile fired by a tower"""
     
-    def __init__(self, x, y, target, damage, speed, color):
+    def __init__(self, x, y, target, damage, speed, color, splash_radius=0):
         """
         Initialize a projectile
         
@@ -12,8 +12,9 @@ class Projectile:
             x, y: Starting position
             target: Enemy object to track
             damage: Damage to deal on hit
-            speed: Projectile speed (pixels per second)
+            speed: Projectile speed (pixels per second), 0 for instant
             color: RGB tuple for projectile color
+            splash_radius: Radius for splash damage (0 = no splash)
         """
         self.x = x
         self.y = y
@@ -21,14 +22,16 @@ class Projectile:
         self.damage = damage
         self.speed = speed
         self.color = color
+        self.splash_radius = splash_radius
         self.active = True
     
-    def update(self, dt):
+    def update(self, dt, all_enemies):
         """
         Move projectile toward target
         
         Args:
             dt: Delta time in seconds
+            all_enemies: List of all enemies (for splash damage)
             
         Returns:
             bool: True if hit target or target died, False if still traveling
@@ -37,15 +40,18 @@ class Projectile:
             self.active = False
             return True
         
+        # Instant hit (sniper)
+        if self.speed == 0:
+            self.hit_target(all_enemies)
+            return True
+        
         # Calculate direction to target
         dx = self.target.x - self.x
         dy = self.target.y - self.y
         distance = math.sqrt(dx * dx + dy * dy)
         
         if distance == 0:
-            # Already at target
-            self.target.take_damage(self.damage)
-            self.active = False
+            self.hit_target(all_enemies)
             return True
         
         # Calculate movement distance this frame
@@ -53,14 +59,35 @@ class Projectile:
         
         if distance <= move_distance:
             # Hit target
-            self.target.take_damage(self.damage)
-            self.active = False
+            self.hit_target(all_enemies)
             return True
         else:
             # Move toward target
             self.x += (dx / distance) * move_distance
             self.y += (dy / distance) * move_distance
             return False
+    
+    def hit_target(self, all_enemies):
+        """Apply damage to target and splash if applicable"""
+        # Direct damage
+        self.target.take_damage(self.damage)
+        
+        # Splash damage
+        if self.splash_radius > 0:
+            for enemy in all_enemies:
+                if not enemy.alive or enemy == self.target:
+                    continue
+                
+                # Check if in splash radius
+                dx = enemy.x - self.target.x
+                dy = enemy.y - self.target.y
+                distance = math.sqrt(dx * dx + dy * dy)
+                
+                if distance <= self.splash_radius:
+                    # Splash does 50% damage
+                    enemy.take_damage(self.damage * 0.5)
+        
+        self.active = False
     
     def draw(self, matrix):
         """Draw the projectile on the LED matrix"""
@@ -74,43 +101,63 @@ class Tower:
     
     # Tower type definitions
     TOWER_TYPES = {
-        "dart": {
-            "name": "Dart Monkey",
+        "machine_gun": {
+            "name": "Machine Gun",
             "cost": 30,
             "damage": 1,
-            "range": 15,
-            "fire_rate": 0.8,  # Seconds between shots
-            "projectile_speed": 50,  # Pixels per second
-            "color": (100, 50, 0),  # Brown
-            "projectile_color": (150, 150, 150),  # Gray dart
+            "range": 14,
+            "fire_rate": 0.5,
+            "projectile_speed": 60,
+            "color": (100, 150, 50),  # Green/brown
+            "projectile_color": (200, 200, 200),  # Gray
             "size": 3,
-            "description": "Basic tower with decent range"
+            "can_see_invisible": False,
+            "splash_radius": 0,
+            "description": "Fast firing, general purpose"
         },
-        "tack": {
-            "name": "Tack Shooter",
-            "cost": 45,
-            "damage": 1,
-            "range": 8,
-            "fire_rate": 0.5,  # Faster fire rate
+        "cannon": {
+            "name": "Cannon",
+            "cost": 50,
+            "damage": 2,
+            "range": 10,
+            "fire_rate": 1.5,
             "projectile_speed": 40,
-            "color": (200, 0, 0),  # Red
-            "projectile_color": (255, 100, 0),  # Orange tack
+            "color": (80, 80, 80),  # Dark gray
+            "projectile_color": (255, 200, 0),  # Yellow shell
             "size": 3,
-            "shots_per_attack": 4,  # Fires 4 projectiles
-            "description": "Short range, fires multiple projectiles"
+            "can_see_invisible": False,
+            "splash_radius": 3,
+            "description": "Splash damage, short range"
         },
-        "bomb": {
-            "name": "Bomb Tower",
+        "sniper": {
+            "name": "Sniper",
             "cost": 65,
-            "damage": 3,
-            "range": 12,
-            "fire_rate": 1.5,  # Slower fire rate
-            "projectile_speed": 35,
-            "color": (50, 50, 50),  # Dark gray
-            "projectile_color": (255, 200, 0),  # Yellow bomb
+            "damage": 4,
+            "range": 26,
+            "fire_rate": 2.0,
+            "projectile_speed": 0,  # Instant hit
+            "color": (40, 40, 40),  # Black
+            "projectile_color": (255, 255, 100),  # Bright tracer
             "size": 3,
-            "splash_radius": 3,  # Damages nearby enemies
-            "description": "Explosive damage to multiple enemies"
+            "can_see_invisible": True,
+            "splash_radius": 0,
+            "description": "High damage, long range, sees invisible"
+        },
+        "radar": {
+            "name": "Radar",
+            "cost": 40,
+            "damage": 0,
+            "range": 22,
+            "fire_rate": 999,  # Never fires
+            "projectile_speed": 0,
+            "color": (50, 150, 200),  # Blue
+            "projectile_color": (0, 0, 0),  # Not used
+            "size": 3,
+            "can_see_invisible": True,
+            "splash_radius": 0,
+            "is_radar": True,
+            "radar_sweep_speed": 2.0,  # Radians per second
+            "description": "Reveals invisible enemies"
         }
     }
     
@@ -119,7 +166,7 @@ class Tower:
         Initialize a tower
         
         Args:
-            tower_type: Type of tower ("dart", "tack", "bomb")
+            tower_type: Type of tower
             x, y: Position on the map
         """
         self.tower_type = tower_type
@@ -136,10 +183,13 @@ class Tower:
         self.color = stats["color"]
         self.projectile_color = stats["projectile_color"]
         self.size = stats["size"]
+        self.can_see_invisible = stats["can_see_invisible"]
+        self.splash_radius = stats["splash_radius"]
         
-        # Optional stats
-        self.shots_per_attack = stats.get("shots_per_attack", 1)
-        self.splash_radius = stats.get("splash_radius", 0)
+        # Radar-specific
+        self.is_radar = stats.get("is_radar", False)
+        self.radar_angle = 0  # Current sweep angle
+        self.radar_sweep_speed = stats.get("radar_sweep_speed", 2.0)
         
         # State tracking
         self.time_since_last_shot = 0
@@ -154,11 +204,21 @@ class Tower:
             dt: Delta time in seconds
             enemies: List of Enemy objects
         """
+        # Radar towers don't shoot, but they sweep
+        if self.is_radar:
+            self.radar_angle += self.radar_sweep_speed * dt
+            if self.radar_angle > 2 * math.pi:
+                self.radar_angle -= 2 * math.pi
+            
+            # Reveal enemies that the sweep passes over
+            self._update_radar_sweep(enemies)
+            return
+        
         self.time_since_last_shot += dt
         
         # Update existing projectiles
         for projectile in self.projectiles[:]:
-            if projectile.update(dt):
+            if projectile.update(dt, enemies):
                 self.projectiles.remove(projectile)
         
         # Check if we can shoot
@@ -167,6 +227,36 @@ class Tower:
             if target:
                 self.shoot(target)
                 self.time_since_last_shot = 0
+    
+    def _update_radar_sweep(self, enemies):
+        """Update which enemies are revealed by radar sweep"""
+        sweep_width = 0.3  # Radians of sweep arc width
+        
+        for enemy in enemies:
+            if not enemy.invisible:
+                continue
+            
+            # Check if enemy is in range
+            dx = enemy.x - self.x
+            dy = enemy.y - self.y
+            distance = math.sqrt(dx * dx + dy * dy)
+            
+            if distance <= self.range:
+                # Calculate angle to enemy
+                angle_to_enemy = math.atan2(dy, dx)
+                
+                # Normalize angles to 0-2π
+                if angle_to_enemy < 0:
+                    angle_to_enemy += 2 * math.pi
+                
+                # Check if enemy is within sweep arc
+                angle_diff = abs(angle_to_enemy - self.radar_angle)
+                if angle_diff > math.pi:
+                    angle_diff = 2 * math.pi - angle_diff
+                
+                if angle_diff < sweep_width:
+                    enemy.revealed = True
+                    enemy.reveal_timer = 0.5  # Stay revealed for 0.5 seconds after sweep passes
     
     def find_target(self, enemies):
         """
@@ -184,6 +274,10 @@ class Tower:
         
         for enemy in enemies:
             if not enemy.alive:
+                continue
+            
+            # Check if enemy is invisible and we can't see it
+            if enemy.invisible and not self.can_see_invisible:
                 continue
             
             # Check if enemy is in range
@@ -204,43 +298,59 @@ class Tower:
     
     def shoot(self, target):
         """
-        Fire projectile(s) at target
+        Fire projectile at target
         
         Args:
             target: Enemy object to shoot at
         """
-        if self.shots_per_attack == 1:
-            # Single shot
-            projectile = Projectile(
-                self.x, self.y,
-                target,
-                self.damage,
-                self.projectile_speed,
-                self.projectile_color
-            )
-            self.projectiles.append(projectile)
-        else:
-            # Multiple shots (tack shooter style)
-            # Distribute projectiles in different directions
-            for i in range(self.shots_per_attack):
-                # Find enemy in each quadrant if possible, otherwise use main target
-                quadrant_target = self.find_quadrant_target(i, target.x, target.y)
-                projectile = Projectile(
-                    self.x, self.y,
-                    quadrant_target if quadrant_target else target,
-                    self.damage,
-                    self.projectile_speed,
-                    self.projectile_color
-                )
-                self.projectiles.append(projectile)
-    
-    def find_quadrant_target(self, quadrant, default_x, default_y):
-        """Helper for multi-shot towers - can be enhanced later"""
-        return None  # For now, all shots go to main target
+        projectile = Projectile(
+            self.x, self.y,
+            target,
+            self.damage,
+            self.projectile_speed,
+            self.projectile_color,
+            self.splash_radius
+        )
+        self.projectiles.append(projectile)
     
     def draw(self, matrix):
         """Draw the tower on the LED matrix"""
-        # Draw tower as a colored square
+        # Radar-specific drawing (draw range circle FIRST, under everything)
+        if self.is_radar:
+            # Draw single translucent green circle outline
+            radius = int(self.range)
+            cx = int(self.x)
+            cy = int(self.y)
+            
+            # Dim translucent green for the border
+            circle_color = (0, 80, 0)  # Darker, more subtle green
+            
+            x = radius
+            y = 0
+            err = 0
+            
+            while x >= y:
+                # Draw 8 symmetric points (single pixel outline)
+                points = [
+                    (cx + x, cy + y), (cx + y, cy + x),
+                    (cx - y, cy + x), (cx - x, cy + y),
+                    (cx - x, cy - y), (cx - y, cy - x),
+                    (cx + y, cy - x), (cx + x, cy - y)
+                ]
+                
+                for px, py in points:
+                    if 0 <= px < matrix.width and 0 <= py < matrix.height:
+                        matrix.set_pixel(px, py, *circle_color)
+                
+                if err <= 0:
+                    y += 1
+                    err += 2 * y + 1
+                
+                if err > 0:
+                    x -= 1
+                    err -= 2 * x + 1
+        
+        # Draw tower base
         half_size = self.size // 2
         matrix.fill_rect(
             int(self.x) - half_size,
@@ -250,14 +360,31 @@ class Tower:
             *self.color
         )
         
+        # Radar rotating sweep line (extends to full range)
+        if self.is_radar:
+            # Draw sweep line extending to the edge of range (subtract 1 to stay inside circle)
+            sweep_length = int(self.range) - 1
+            end_x = int(self.x + math.cos(self.radar_angle) * sweep_length)
+            end_y = int(self.y + math.sin(self.radar_angle) * sweep_length)
+            # Translucent green for sweep line
+            matrix.draw_line(int(self.x), int(self.y), end_x, end_y, 0, 120, 0)
+        
         # Draw projectiles
         for projectile in self.projectiles:
             projectile.draw(matrix)
+        
+        # Draw sniper tracer line
+        if self.tower_type == "sniper" and self.target and self.target.alive:
+            if self.time_since_last_shot < 0.1:  # Flash for 100ms
+                matrix.draw_line(
+                    int(self.x), int(self.y),
+                    int(self.target.x), int(self.target.y),
+                    *self.projectile_color
+                )
     
     def draw_range(self, matrix):
         """
         Draw tower range indicator (for UI/debugging)
-        This draws a circle outline showing the tower's range
         """
         range_color = (100, 100, 100)  # Gray
         

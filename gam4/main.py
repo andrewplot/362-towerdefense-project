@@ -30,9 +30,27 @@ def main():
     
     # Game loop
     clock = pygame.time.Clock()
-    last_spawn_time = 0
-    auto_spawn_interval = 2.5
     running = True
+    
+    print("\n=== TOWER DEFENSE CONTROLS ===")
+    print("\nTOWERS:")
+    print("  1 = Machine Gun ($30) - Fast fire, general purpose")
+    print("  2 = Cannon ($50) - Splash damage, short range")
+    print("  3 = Sniper ($65) - High damage, sees invisible")
+    print("  4 = Radar ($40) - Reveals invisible enemies")
+    print("\nENEMIES:")
+    print("  Q = Scout (3 HP, normal speed)")
+    print("  W = Tank (10 HP, slow, 2 damage)")
+    print("  E = Splitter (2 HP, fast, splits into 2 scouts)")
+    print("  R = Ghost (4 HP, invisible)")
+    print("\nABILITIES:")
+    print("  A = Apache Strike ($50)")
+    print("  B = Bomber Run ($75)")
+    print("\nOTHER:")
+    print("  T = Toggle tower ranges")
+    print("  Click = Place selected tower")
+    print("  ESC = Quit")
+    print("\n===============================\n")
     
     while running:
         dt = clock.get_time() / 1000.0
@@ -44,42 +62,60 @@ def main():
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     running = False
-                elif event.key == pygame.K_SPACE:
-                    game.spawn_enemy("basic")
-                elif event.key == pygame.K_f:
-                    game.spawn_enemy("fast")
-                elif event.key == pygame.K_t:
-                    game.spawn_enemy("tank")
+                
+                # Tower selection
                 elif event.key == pygame.K_1:
-                    game.selected_tower_type = "dart"
+                    game.selected_tower_type = "machine_gun"
+                    print("Selected: Machine Gun ($30)")
                 elif event.key == pygame.K_2:
-                    game.selected_tower_type = "tack"
+                    game.selected_tower_type = "cannon"
+                    print("Selected: Cannon ($50)")
                 elif event.key == pygame.K_3:
-                    game.selected_tower_type = "bomb"
+                    game.selected_tower_type = "sniper"
+                    print("Selected: Sniper ($65)")
+                elif event.key == pygame.K_4:
+                    game.selected_tower_type = "radar"
+                    print("Selected: Radar ($40)")
+                
+                # Enemy spawning
+                elif event.key == pygame.K_q:
+                    game.spawn_enemy("scout")
+                    print("Spawned: Scout")
+                elif event.key == pygame.K_w:
+                    game.spawn_enemy("tank")
+                    print("Spawned: Tank")
+                elif event.key == pygame.K_e:
+                    game.spawn_enemy("splitter")
+                    print("Spawned: Splitter")
+                elif event.key == pygame.K_r:
+                    game.spawn_enemy("ghost")
+                    print("Spawned: Ghost (invisible)")
+                
+                # Abilities
                 elif event.key == pygame.K_a:
-                    # Apache Strike ability
                     if game.activate_ability("apache"):
                         print("Apache Strike activated!")
                     else:
-                        print("Can't activate Apache (cost: 50, cooldown or insufficient funds)")
+                        print("Can't activate Apache (cost: $50, cooldown or insufficient funds)")
                 elif event.key == pygame.K_b:
-                    # Bomber ability
                     if game.activate_ability("bomber"):
                         print("Bomber Run activated!")
                     else:
-                        print("Can't activate Bomber (cost: 75, cooldown or insufficient funds)")
-                elif event.key == pygame.K_r:
+                        print("Can't activate Bomber (cost: $75, cooldown or insufficient funds)")
+                
+                # Toggle ranges
+                elif event.key == pygame.K_t:
                     game.show_tower_ranges = not game.show_tower_ranges
+                    print(f"Tower ranges: {'ON' if game.show_tower_ranges else 'OFF'}")
+            
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 pos = event.pos
                 matrix_x = pos[0] // matrix.pixel_size
                 matrix_y = pos[1] // matrix.pixel_size
-                game.handle_click(matrix_x, matrix_y)
-        
-        # Auto-spawn enemies
-        if game.game_time - last_spawn_time > auto_spawn_interval and not game.game_over:
-            game.spawn_enemy("basic")
-            last_spawn_time = game.game_time
+                if game.handle_click(matrix_x, matrix_y):
+                    print(f"Placed {game.selected_tower_type} at ({matrix_x}, {matrix_y})")
+                else:
+                    print("Cannot place tower there")
         
         # Update and draw
         game.update(dt)
@@ -88,9 +124,12 @@ def main():
         # Display game info in window title
         apache_cd = game.ability_manager.get_cooldown_remaining("apache", game.game_time)
         bomber_cd = game.ability_manager.get_cooldown_remaining("bomber", game.game_time)
+        
+        tower_type_name = game.selected_tower_type if game.selected_tower_type else "None"
+        
         pygame.display.set_caption(
             f"TD | ${game.money} | Lives:{game.lives} | Score:{game.score} | "
-            f"Apache:{apache_cd:.1f}s | Bomber:{bomber_cd:.1f}s"
+            f"Selected:{tower_type_name} | Apache:{apache_cd:.1f}s | Bomber:{bomber_cd:.1f}s"
         )
         
         if not matrix.update_display():
@@ -102,9 +141,4 @@ def main():
 
 
 if __name__ == "__main__":
-    print("Tower Defense Game")
-    print("Towers: 1=Dart | 2=Tack | 3=Bomb")
-    print("Enemies: SPACE=Basic | F=Fast | T=Tank")
-    print("Abilities: A=Apache Strike ($50) | B=Bomber Run ($75)")
-    print("Other: R=Show Ranges | Click=Place Tower | ESC=Quit")
     main()

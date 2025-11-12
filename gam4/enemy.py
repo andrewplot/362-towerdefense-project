@@ -2,13 +2,48 @@ class Enemy:
     
     # Enemy type definitions
     ENEMY_TYPES = {
-        "basic": {
-            "health": 1,
-            "speed": 3,
+        "scout": {
+            "health": 3,
+            "speed": 4,
             "color": (200, 20, 20),
-            "reward": 1,
+            "reward": 2,
             "damage": 1,
-            "size": 1
+            "size": 1,
+            "invisible": False,
+            "splits_on_death": False
+        },
+        "tank": {
+            "health": 10,
+            "speed": 2,
+            "color": (80, 80, 80),
+            "armor_color": (255, 200, 0),  # Yellow stripes
+            "reward": 6,
+            "damage": 2,
+            "size": 1,
+            "invisible": False,
+            "splits_on_death": False
+        },
+        "splitter": {
+            "health": 2,
+            "speed": 7,
+            "color": (255, 180, 0),  # Orange
+            "reward": 3,
+            "damage": 1,
+            "size": 1,
+            "invisible": False,
+            "splits_on_death": True,
+            "split_count": 2,
+            "split_type": "scout"
+        },
+        "ghost": {
+            "health": 4,
+            "speed": 5,
+            "color": (150, 100, 255),  # Purple (not used when invisible)
+            "reward": 5,
+            "damage": 1,
+            "size": 1,
+            "invisible": True,
+            "splits_on_death": False
         }
     }
     
@@ -17,7 +52,7 @@ class Enemy:
         Initialize an enemy
         
         Args:
-            enemy_type: Type of enemy ("basic")
+            enemy_type: Type of enemy
             path: List of (x, y) waypoints to follow
             spawn_time: Time when enemy was spawned
         """
@@ -31,16 +66,24 @@ class Enemy:
         self.health = self.max_health
         self.speed = stats["speed"]
         self.color = stats["color"]
+        self.armor_color = stats.get("armor_color", None)
         self.reward = stats["reward"]
         self.damage = stats["damage"]
         self.size = stats["size"]
+        self.invisible = stats["invisible"]
+        self.splits_on_death = stats["splits_on_death"]
+        self.split_count = stats.get("split_count", 0)
+        self.split_type = stats.get("split_type", None)
         
         # Position tracking
         self.x, self.y = path[0]  # Start at first waypoint
         self.path_index = 0  # Current waypoint we're moving toward
         self.path_progress = 0.0  # Total distance traveled along path
         
+        # State
         self.alive = True
+        self.revealed = False  # For radar detection
+        self.reveal_timer = 0.0  # Time remaining for reveal effect
     
     def update(self, dt):
         """
@@ -52,6 +95,12 @@ class Enemy:
         Returns:
             bool: True if reached end of path, False otherwise
         """
+        # Update reveal timer
+        if self.reveal_timer > 0:
+            self.reveal_timer -= dt
+            if self.reveal_timer <= 0:
+                self.revealed = False
+        
         if self.path_index >= len(self.path) - 1:
             # Reached the end
             return True
@@ -98,16 +147,42 @@ class Enemy:
         if self.health <= 0:
             self.alive = False
     
+    def is_visible_to_tower(self, tower):
+        """
+        Check if this enemy can be seen by a tower
+        
+        Args:
+            tower: Tower object
+            
+        Returns:
+            bool: True if visible
+        """
+        if not self.invisible:
+            return True
+        
+        if self.revealed:
+            return True
+        
+        return tower.can_see_invisible
+    
     def draw(self, matrix):
         """Draw the enemy on the LED matrix"""
-        # Draw enemy as a colored circle (using filled rect for simplicity)
-        half_size = self.size // 2
         x = int(self.x)
         y = int(self.y)
-        matrix.fill_rect(
-            x - half_size, 
-            y - half_size, 
-            self.size, 
-            self.size, 
-            *self.color
-        )
+        
+        # Ghost refraction effect (blend with background)
+        if self.invisible and not self.revealed:
+            # Get the background color at this position
+            if 0 <= y < len(matrix.buffer) and 0 <= x < len(matrix.buffer[0]):
+                bg_r, bg_g, bg_b = matrix.buffer[y][x]
+                
+                # Create very subtle "refraction" by barely shifting the color
+                # Just add a tiny bit of blue tint (almost invisible)
+                refract_r = min(255, int(bg_r * 1.0 + 3))
+                refract_g = min(255, int(bg_g * 1.0 + 5))
+                refract_b = min(255, int(bg_b * 1.0 + 15))
+                
+                matrix.set_pixel(x, y, refract_r, refract_g, refract_b)
+        else:
+            # Draw normally as single pixel
+            matrix.set_pixel(x, y, *self.color)

@@ -3,6 +3,7 @@ Map Renderer for Tower Defense Game
 Draws map data to the LED matrix
 """
 import random
+
 class MapRenderer:
     """Draws map data to the LED matrix"""
     # Color definitions
@@ -11,7 +12,6 @@ class MapRenderer:
     TOWER_SELECTION_COLOR = (255, 215, 0)
     SPAWN_COLOR = (255, 255, 0)       # Yellow spawn
     END_COLOR = (255, 0, 255)         # Magenta end
-    # VARIATION = 5
     
     # Decoration colors
     TREE_COLOR = (0, 80, 0)
@@ -29,8 +29,10 @@ class MapRenderer:
         """
         self.matrix = matrix
         self.map_data = map_data
-        self.background_dat = None #caches background
+        self.background_pixels = None  # Cache background
+        self.path_pixels = {}  # Cache path texture: {(x, y): (r, g, b)}
         self._generate_background()
+        self._generate_path()
     
     def _generate_background(self):
         """Generate the background with variations once"""
@@ -46,6 +48,70 @@ class MapRenderer:
                 b = max(0, min(255, base_b + random.randint(-variation, variation)))
                 row.append((r, g, b))
             self.background_pixels.append(row)
+    
+    def _generate_path(self):
+        """Generate textured path once"""
+        self.path_pixels = {}
+        variation = 8
+        base_r, base_g, base_b = self.PATH_COLOR
+        
+        # Generate path texture for all path segments
+        for i in range(len(self.map_data.path) - 1):
+            x1, y1 = self.map_data.path[i]
+            x2, y2 = self.map_data.path[i + 1]
+            
+            # Get all pixels along this path segment (3 pixels wide)
+            path_points = self._get_path_segment_pixels(x1, y1, x2, y2)
+            
+            # Assign random texture to each pixel
+            for px, py in path_points:
+                r = max(0, min(255, base_r + random.randint(-variation, variation)))
+                g = max(0, min(255, base_g + random.randint(-variation, variation)))
+                b = max(0, min(255, base_b + random.randint(-variation, variation)))
+                self.path_pixels[(px, py)] = (r, g, b)
+    
+    def _get_path_segment_pixels(self, x1, y1, x2, y2):
+        """Get all pixels that make up a 3-pixel-wide path segment"""
+        pixels = set()
+        
+        # Get center line pixels
+        center_pixels = self._bresenham_line(x1, y1, x2, y2)
+        
+        # Add center and perpendicular offsets for width
+        for cx, cy in center_pixels:
+            pixels.add((cx, cy))
+            
+            if y1 == y2:  # Horizontal path
+                pixels.add((cx, cy - 1))
+                pixels.add((cx, cy + 1))
+            else:  # Vertical path
+                pixels.add((cx - 1, cy))
+                pixels.add((cx + 1, cy))
+        
+        return pixels
+    
+    def _bresenham_line(self, x1, y1, x2, y2):
+        """Get all pixels along a line using Bresenham's algorithm"""
+        pixels = []
+        dx = abs(x2 - x1)
+        dy = abs(y2 - y1)
+        sx = 1 if x1 < x2 else -1
+        sy = 1 if y1 < y2 else -1
+        err = dx - dy
+        
+        while True:
+            pixels.append((x1, y1))
+            if x1 == x2 and y1 == y2:
+                break
+            e2 = 2 * err
+            if e2 > -dy:
+                err -= dy
+                x1 += sx
+            if e2 < dx:
+                err += dx
+                y1 += sy
+        
+        return pixels
 
     def draw_background(self):
         """Draw the cached background color"""
@@ -53,8 +119,6 @@ class MapRenderer:
             for x in range(self.matrix.width):
                 r, g, b = self.background_pixels[y][x]
                 self.matrix.fill_rect(x, y, 1, 1, r, g, b)
-            # r, g, b = self.map_data.background_color
-            # self.matrix.fill_rect(0, 0, self.matrix.width, self.matrix.height, r, g, b)
     
     def draw_decorations(self):
         """Draw decorative elements (trees, rocks, etc)"""
@@ -74,25 +138,12 @@ class MapRenderer:
                 self.matrix.fill_rect(x-1, y-1, 6, 2, *self.LAKE_COLOR)
                 self.matrix.fill_rect(x, y-2, 3, 1, *self.LAKE_COLOR)
                 self.matrix.fill_rect(x+1, y+1, 3, 1, *self.LAKE_COLOR)
-
     
     def draw_path(self):
-        """Draw the enemy path (3 pixels wide)"""
-        # Draw lines between waypoints
-        for i in range(len(self.map_data.path) - 1):
-            x1, y1 = self.map_data.path[i]
-            x2, y2 = self.map_data.path[i + 1]
-            
-            # Draw center line
-            self.matrix.draw_line(x1, y1, x2, y2, *self.PATH_COLOR)
-            
-            # Make path 3 pixels wide
-            if y1 == y2:  #horizontal path
-                self.matrix.draw_line(x1, y1 - 1, x2, y2 - 1, *self.PATH_COLOR)
-                self.matrix.draw_line(x1, y1 + 1, x2, y2 + 1, *self.PATH_COLOR)
-            else:  # vertical pathp
-                self.matrix.draw_line(x1 - 1, y1, x2 - 1, y2, *self.PATH_COLOR)
-                self.matrix.draw_line(x1 + 1, y1, x2 + 1, y2, *self.PATH_COLOR)
+        """Draw the enemy path (3 pixels wide) with cached texture"""
+        for (px, py), color in self.path_pixels.items():
+            if 0 <= px < self.matrix.width and 0 <= py < self.matrix.height:
+                self.matrix.set_pixel(px, py, *color)
     
     def draw_tower_slots(self):
         """Draw tower placement locations"""

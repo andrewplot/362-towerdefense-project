@@ -5,6 +5,7 @@ Game logic and state management for Tower Defense
 from map_render import MapRenderer
 from enemy import Enemy
 from tower import Tower
+from ability import AbilityManager
 
 
 class Game:
@@ -27,6 +28,9 @@ class Game:
         # Tower placement state
         self.selected_tower_type = None
         self.show_tower_ranges = False
+        
+        # Ability system
+        self.ability_manager = AbilityManager()
     
     def spawn_enemy(self, enemy_type):
         """Spawn a new enemy"""
@@ -76,12 +80,39 @@ class Game:
         
         return nearest_slot if nearest_distance <= max_distance else None
     
+    def activate_ability(self, ability_type):
+        """
+        Activate a special ability
+        
+        Args:
+            ability_type: Type of ability ("apache", "bomber")
+            
+        Returns:
+            bool: True if activated successfully
+        """
+        if not self.ability_manager.can_activate(ability_type, self.money, self.game_time):
+            return False
+        
+        # Deduct cost
+        cost = AbilityManager.ABILITY_TYPES[ability_type]["cost"]
+        self.money -= cost
+        
+        # Calculate average path Y coordinate for bomber targeting
+        path_y = sum(y for x, y in self.map_data.path) / len(self.map_data.path) if self.map_data.path else 16
+        
+        # Activate
+        self.ability_manager.activate(ability_type, self.game_time, self.matrix.width, path_y)
+        return True
+    
     def update(self, dt):
         """Update game state"""
         if self.game_over:
             return
         
         self.game_time += dt
+        
+        # Update abilities
+        self.ability_manager.update(dt, self.enemies)
         
         # Update towers
         for tower in self.towers:
@@ -118,6 +149,9 @@ class Game:
             tower.draw(self.matrix)
         for enemy in self.enemies:
             enemy.draw(self.matrix)
+        
+        # Draw abilities (on top layer)
+        self.ability_manager.draw(self.matrix)
     
     def handle_click(self, matrix_x, matrix_y):
         """Handle click for tower placement"""

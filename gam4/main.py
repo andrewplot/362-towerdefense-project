@@ -46,12 +46,28 @@ def main():
                     running = False
                 elif event.key == pygame.K_SPACE:
                     game.spawn_enemy("basic")
+                elif event.key == pygame.K_f:
+                    game.spawn_enemy("fast")
+                elif event.key == pygame.K_t:
+                    game.spawn_enemy("tank")
                 elif event.key == pygame.K_1:
                     game.selected_tower_type = "dart"
                 elif event.key == pygame.K_2:
                     game.selected_tower_type = "tack"
                 elif event.key == pygame.K_3:
                     game.selected_tower_type = "bomb"
+                elif event.key == pygame.K_a:
+                    # Apache Strike ability
+                    if game.activate_ability("apache"):
+                        print("Apache Strike activated!")
+                    else:
+                        print("Can't activate Apache (cost: 50, cooldown or insufficient funds)")
+                elif event.key == pygame.K_b:
+                    # Bomber ability
+                    if game.activate_ability("bomber"):
+                        print("Bomber Run activated!")
+                    else:
+                        print("Can't activate Bomber (cost: 75, cooldown or insufficient funds)")
                 elif event.key == pygame.K_r:
                     game.show_tower_ranges = not game.show_tower_ranges
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
@@ -69,6 +85,14 @@ def main():
         game.update(dt)
         game.draw()
         
+        # Display game info in window title
+        apache_cd = game.ability_manager.get_cooldown_remaining("apache", game.game_time)
+        bomber_cd = game.ability_manager.get_cooldown_remaining("bomber", game.game_time)
+        pygame.display.set_caption(
+            f"TD | ${game.money} | Lives:{game.lives} | Score:{game.score} | "
+            f"Apache:{apache_cd:.1f}s | Bomber:{bomber_cd:.1f}s"
+        )
+        
         if not matrix.update_display():
             running = False
         
@@ -79,5 +103,8 @@ def main():
 
 if __name__ == "__main__":
     print("Tower Defense Game")
-    print("1/2/3: Select towers | Click: Place | R: Ranges | SPACE: Spawn")
+    print("Towers: 1=Dart | 2=Tack | 3=Bomb")
+    print("Enemies: SPACE=Basic | F=Fast | T=Tank")
+    print("Abilities: A=Apache Strike ($50) | B=Bomber Run ($75)")
+    print("Other: R=Show Ranges | Click=Place Tower | ESC=Quit")
     main()

@@ -8,10 +8,14 @@ enemy types:
     fast white that splits into reds
     higher health blues
     lead
-    moab
+    moab that ignores path
 
 maps:
     some kind of water that requires building rafts for towers?
+    another stage, one easy one hard
 
 other:
     ability to place towers anywhere
+    some kind of ability
+    flash house from yellow to red on each hit of damage
+    NIGHT TIME WITH LIGHTS?? TREES CAST SHADOWS

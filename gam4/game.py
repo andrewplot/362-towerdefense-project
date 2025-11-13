@@ -89,7 +89,8 @@ class Game:
         Args:
             wave_number: Wave number to display on banner
         """
-        self.banner_plane = BannerPlane(-45, 16, self.game_time, wave_number)
+        # Spawn from RIGHT side (off-screen) since plane flies right-to-left
+        self.banner_plane = BannerPlane(70, 16, self.game_time, wave_number)
         return self.banner_plane
     
     def place_tower(self, tower_type, x, y):

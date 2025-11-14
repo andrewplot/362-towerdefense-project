@@ -5,3 +5,7 @@
 .vscode/ipch
 game/
 gam3/
+
+/schematics/tower-defense-backups
+*/fp-info-cache
+/schematics/*.kicad_prl

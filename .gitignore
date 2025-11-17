@@ -9,3 +9,5 @@ gam3/
 /schematics/tower-defense-backups
 */fp-info-cache
 /schematics/*.kicad_prl
+schematics/tower-defense/tower-defense-backups
+schematics/matrix-bonnet

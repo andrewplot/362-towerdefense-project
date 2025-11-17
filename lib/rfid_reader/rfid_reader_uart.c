@@ -9,8 +9,8 @@ static bool pn532_ready = false;
 
 void pn532_uart_reader_init(void) {
     // RP2350 Proton Board connections for UART
-    const uint TX_PIN = 0;  // GPIO 0 = UART0 TX -> PN532 RX
-    const uint RX_PIN = 1;  // GPIO 1 = UART0 RX <- PN532 TX
+    const uint TX_PIN = 22;  // GPIO 32 = UART0 TX -> PN532 RX
+    const uint RX_PIN = 33;  // GPIO 33 = UART0 RX <- PN532 TX
     const uint BAUD_RATE = 115200;
     
     printf("pn532_uart_reader_init: begin\r\n");
@@ -40,9 +40,9 @@ void pn532_uart_reader_init(void) {
         printf("    - Channel 1 = OFF (for UART/HSU)\r\n");
         printf("    - Channel 2 = OFF (for UART/HSU)\r\n");
         printf("[2] POWER: Check 3.3V and GND connections\r\n");
-        printf("[3] UART: Check TX (GP0) and RX (GP1) connections\r\n");
-        printf("    - RP2350 TX (GP0) -> PN532 RX\r\n");
-        printf("    - RP2350 RX (GP1) -> PN532 TX\r\n");
+        printf("[3] UART: Check TX (GP32) and RX (GP33) connections\r\n");
+        printf("    - RP2350 TX (GP32) -> PN532 RX\r\n");
+        printf("    - RP2350 RX (GP33) -> PN532 TX\r\n");
         printf("[4] WIRING: Don't cross TX/RX - TX goes to RX on other side\r\n");
         pn532_ready = false;
         return;

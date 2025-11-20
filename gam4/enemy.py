@@ -16,7 +16,7 @@ class Enemy:
             "health": 10,
             "speed": 2,
             "color": (80, 80, 80),
-            "armor_color": (255, 200, 0),  # Yellow stripes
+            "armor_color": (255, 200, 0),  # yellow stripes
             "reward": 6,
             "damage": 2,
             "size": 1,
@@ -26,7 +26,7 @@ class Enemy:
         "splitter": {
             "health": 2,
             "speed": 7,
-            "color": (255, 180, 0),  # Orange
+            "color": (255, 180, 0),  # orange
             "reward": 3,
             "damage": 1,
             "size": 1,
@@ -38,7 +38,7 @@ class Enemy:
         "ghost": {
             "health": 4,
             "speed": 5,
-            "color": (150, 100, 255),  # Purple (not used when invisible)
+            "color": (150, 100, 255),  # Purple (when visible)
             "reward": 5,
             "damage": 1,
             "size": 1,

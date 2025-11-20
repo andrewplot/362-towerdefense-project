@@ -119,7 +119,7 @@ class BannerPlane:
             matrix.set_pixel(x - 5, y - 1, *prop_color)
             matrix.set_pixel(x - 5, y + 1, *prop_color)
         
-        # Propeller hub (now on left)
+        # Propeller hub
         matrix.set_pixel(x - 5, y, 100, 100, 100)
     
     def _draw_banner(self, matrix, plane_x, plane_y):
@@ -294,7 +294,7 @@ class BannerPlane:
                 [0, 0, 1, 0, 0],  # Col 1
                 [0, 0, 1, 0, 0],  # Col 2
                 [1, 1, 1, 1, 1],  # Col 3: vertical + crossbar
-                [0, 0, 1, 1, 1],  # Col 4: bottom
+                [0, 0, 0, 0, 0],  # Col 4: bottom
             ],
             '5': [
                 [1, 1, 0, 0, 1],  # Col 0

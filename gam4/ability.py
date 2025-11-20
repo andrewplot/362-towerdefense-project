@@ -67,7 +67,7 @@ class ApacheStrike:
         
         # Update existing projectiles
         for projectile in self.projectiles[:]:
-            if projectile.update(dt):
+            if projectile.update(dt, enemies):
                 self.projectiles.remove(projectile)
         
         # Try to shoot

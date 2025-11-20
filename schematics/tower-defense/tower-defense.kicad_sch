@@ -6458,12 +6458,6 @@
 		(uuid "be0a67b6-0b2e-478f-b11b-91bc7df7f5db")
 	)
 	(junction
-		(at 45.72 129.54)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "da619496-ad35-411a-b4f9-c3df251785d2")
-	)
-	(junction
 		(at 57.15 129.54)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -6492,10 +6486,6 @@
 	(no_connect
 		(at 44.45 71.12)
 		(uuid "1f81a701-a556-4afc-9bc9-25f50315520a")
-	)
-	(no_connect
-		(at 135.89 44.45)
-		(uuid "23791509-00f9-4e10-8a09-5867a92b1dff")
 	)
 	(no_connect
 		(at 44.45 44.45)
@@ -6538,16 +6528,8 @@
 		(uuid "786f3d96-77b9-4ece-bdf1-d6487c4f9fd5")
 	)
 	(no_connect
-		(at 130.81 44.45)
-		(uuid "81321aaa-436f-41b9-ab30-e3d4f8d6f627")
-	)
-	(no_connect
 		(at 54.61 219.71)
 		(uuid "87afdb44-2d49-4b2b-9add-b393ea5ca245")
-	)
-	(no_connect
-		(at 97.79 71.12)
-		(uuid "8cb85459-8776-48e1-9571-4f417aaad4c3")
 	)
 	(no_connect
 		(at 123.19 71.12)
@@ -6584,6 +6566,10 @@
 	(no_connect
 		(at 80.01 44.45)
 		(uuid "a01884f0-5690-4535-b599-7aeb38b81e19")
+	)
+	(no_connect
+		(at 95.25 71.12)
+		(uuid "a27f713f-a4f8-4466-a229-18e596997243")
 	)
 	(no_connect
 		(at 41.91 219.71)
@@ -6634,8 +6620,16 @@
 		(uuid "db38f8b6-f824-4497-8f2a-cc7a536fb218")
 	)
 	(no_connect
-		(at 133.35 44.45)
+		(at 135.89 44.45)
 		(uuid "dcab44a8-9e48-49a3-8483-91948f55930e")
+	)
+	(no_connect
+		(at 97.79 71.12)
+		(uuid "dfd7cdd9-3b73-4d13-8139-43f1f0a801ec")
+	)
+	(no_connect
+		(at 92.71 71.12)
+		(uuid "e100beaa-0b41-4a92-9f8a-5a2eca6ad5a4")
 	)
 	(no_connect
 		(at 57.15 219.71)
@@ -6969,7 +6963,7 @@
 	)
 	(wire
 		(pts
-			(xy 64.77 226.06) (xy 64.77 219.71)
+			(xy 64.77 223.52) (xy 64.77 219.71)
 		)
 		(stroke
 			(width 0)
@@ -7809,16 +7803,6 @@
 	)
 	(wire
 		(pts
-			(xy 45.72 129.54) (xy 44.45 129.54)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "b53ac489-4e4c-4b8b-8f92-4b2ce41db900")
-	)
-	(wire
-		(pts
 			(xy 146.05 215.9) (xy 156.21 215.9)
 		)
 		(stroke
@@ -7899,16 +7883,6 @@
 	)
 	(wire
 		(pts
-			(xy 92.71 66.04) (xy 92.71 71.12)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "c42b45f6-1a52-4b7e-bfc4-8306fefdacba")
-	)
-	(wire
-		(pts
 			(xy 142.24 213.36) (xy 156.21 213.36)
 		)
 		(stroke
@@ -7969,6 +7943,16 @@
 	)
 	(wire
 		(pts
+			(xy 130.81 36.83) (xy 130.81 44.45)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "d1f90fbb-ba9f-4b2b-9e16-ead34f43a500")
+	)
+	(wire
+		(pts
 			(xy 208.28 53.34) (xy 219.71 53.34)
 		)
 		(stroke
@@ -7979,7 +7963,7 @@
 	)
 	(wire
 		(pts
-			(xy 74.93 219.71) (xy 74.93 226.06)
+			(xy 74.93 219.71) (xy 74.93 223.52)
 		)
 		(stroke
 			(width 0)
@@ -8009,6 +7993,16 @@
 	)
 	(wire
 		(pts
+			(xy 133.35 39.37) (xy 133.35 44.45)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "dc690d15-ec2e-4f2c-a91a-1a079efbabd3")
+	)
+	(wire
+		(pts
 			(xy 55.88 254) (xy 53.34 254)
 		)
 		(stroke
@@ -8026,16 +8020,6 @@
 			(type default)
 		)
 		(uuid "e6ab1542-c86d-49d1-ac8a-8aebcb868a40")
-	)
-	(wire
-		(pts
-			(xy 95.25 68.58) (xy 95.25 71.12)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "e72fbc91-c7d1-42f0-a062-4515f83ea533")
 	)
 	(wire
 		(pts
@@ -8147,16 +8131,6 @@
 		)
 		(uuid "ffa28974-89c1-407c-b2e9-e7b71ebce788")
 	)
-	(label "SDA"
-		(at 95.25 68.58 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "0175c191-6e6a-47f6-bb7d-a075d3058119")
-	)
 	(label "R1"
 		(at 110.49 43.18 0)
 		(effects
@@ -8227,6 +8201,16 @@
 		)
 		(uuid "18282405-94dd-4a9a-9f08-3101836f92cf")
 	)
+	(label "RFID_RX"
+		(at 130.81 36.83 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "197331a7-4d6b-418e-afaf-09c214784cca")
+	)
 	(label "SCK"
 		(at 80.01 67.31 0)
 		(effects
@@ -8287,7 +8271,7 @@
 		)
 		(uuid "362cce92-4f42-4f15-b575-bca16e951652")
 	)
-	(label "TX"
+	(label "OLED_TX"
 		(at 82.55 69.85 0)
 		(effects
 			(font
@@ -8647,7 +8631,7 @@
 		)
 		(uuid "9f48492f-2aa1-4f46-b599-7546130bc827")
 	)
-	(label "SCL"
+	(label "RFID_TX"
 		(at 109.22 217.17 0)
 		(effects
 			(font
@@ -8688,7 +8672,7 @@
 		(uuid "a1b32ecd-7bbb-4afc-b462-f8b8fc6537fd")
 	)
 	(label "SCK"
-		(at 64.77 226.06 0)
+		(at 64.77 223.52 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -8707,7 +8691,7 @@
 		)
 		(uuid "a834300e-5c4f-477b-95ad-4b8c8707a3fe")
 	)
-	(label "TX"
+	(label "OLED_TX"
 		(at 69.85 226.06 0)
 		(effects
 			(font
@@ -8828,7 +8812,7 @@
 		(uuid "d498e128-0261-4e80-9f43-68dc25e7ef80")
 	)
 	(label "CSn"
-		(at 74.93 226.06 0)
+		(at 74.93 223.52 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -8836,6 +8820,16 @@
 			(justify left bottom)
 		)
 		(uuid "d820b1db-6bf1-4595-83e9-ba456197749e")
+	)
+	(label "RFID_TX"
+		(at 133.35 39.37 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "da2a9730-8cc7-4bff-8f69-f926e136c128")
 	)
 	(label "M1_E"
 		(at 243.84 106.68 0)
@@ -8887,16 +8881,6 @@
 		)
 		(uuid "e5e4233e-65d3-42c6-ac76-c0e9585739cb")
 	)
-	(label "SCL"
-		(at 92.71 66.04 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "e68f575e-a4c1-469a-b8d1-793d3222ea52")
-	)
 	(label "M1_C"
 		(at 278.13 68.58 180)
 		(effects
@@ -8927,7 +8911,7 @@
 		)
 		(uuid "f0278aad-25e2-4f0c-a89e-260652fba72d")
 	)
-	(label "SDA"
+	(label "RFID_RX"
 		(at 106.68 214.63 0)
 		(effects
 			(font
@@ -12255,7 +12239,7 @@
 		(at 168.91 226.06 0)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(fields_autoplaced yes)

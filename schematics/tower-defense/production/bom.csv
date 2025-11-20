@@ -1,0 +1,13 @@
+﻿Designator,Footprint,Quantity,Value,LCSC Part #
+"C1, C2",603,2,0.1u,C14663
+D1,PinSocket_1x04_P2.54mm_Vertical,1,LED_ARGB,C2718488
+D2,status_led,1,LTST-S220KGKT,C160469
+J3,PinSocket_1x04_P2.54mm_Horizontal,1,Conn_01x04_Socket,C2897386
+J4,screw-terminal,1,Screw_Terminal_01x02,C592976
+J5,hub75,1,hub75,C3406
+J8,PinSocket_1x03_P2.54mm_Vertical,1,Conn_01x03_Socket,C146243
+J9,PinSocket_1x04_P2.54mm_Vertical,1,Conn_01x04_Socket,C2718488
+"R1, R2, R3",603,3,47,C23182
+R4,603,1,1K,C177343
+SW1,power_switch,1,SW_SPDT,C268239
+"U2, U3",74HTC245,2,74AHCT245,C10910

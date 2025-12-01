@@ -9,8 +9,8 @@ static bool pn532_ready = false;
 
 void pn532_uart_reader_init(void) {
     // RP2350 Proton Board connections for UART
-    const uint TX_PIN = 22;  // GPIO 32 = UART0 TX -> PN532 RX
-    const uint RX_PIN = 33;  // GPIO 33 = UART0 RX <- PN532 TX
+    const uint TX_PIN = 0;  // GPIO 32 = UART0 TX -> PN532 RX
+    const uint RX_PIN = 1;  // GPIO 33 = UART0 RX <- PN532 TX
     const uint BAUD_RATE = 115200;
     
     printf("pn532_uart_reader_init: begin\r\n");

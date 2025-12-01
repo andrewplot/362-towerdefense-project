@@ -140,8 +140,8 @@ int main() {
     
     printf("Initializing PN532 over UART...\r\n");
     printf("UART Configuration:\r\n");
-    printf(" - TX: GPIO 0 (to PN532 RX)\r\n");
-    printf(" - RX: GPIO 1 (from PN532 TX)\r\n");
+    printf(" - TX: GPIO 32 (to PN532 RX)\r\n");
+    printf(" - RX: GPIO 33 (from PN532 TX)\r\n");
     printf(" - Baud: 115200\r\n");
     printf(" - Module switches: Both OFF\r\n");
     printf("\r\n");
@@ -177,6 +177,6 @@ int main() {
             }
         }
         
-        sleep_ms(250);  // Poll 4 times per second
+        sleep_ms(1000);  // Poll 4 times per second
     }
 }

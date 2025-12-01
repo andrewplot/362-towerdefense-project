@@ -3,13 +3,14 @@
 #include "hardware/pwm.h"
 #include "hardware/clocks.h"
 
-static uint buzzer_pin = 0;
-static uint pwm_slice = 0;
-static uint pwm_channel = 0;
+static unsigned int buzzer_pin = 0;
+static unsigned int pwm_slice = 0;
+static unsigned int pwm_channel = 0;
 static bool buzzer_initialized = false;
 static uint8_t current_volume = 50;  // Default 50% duty cycle
+static uint32_t current_wrap = 0;    // Store wrap value
 
-void buzzer_pwm_init(uint pin) {
+void buzzer_pwm_init(unsigned int pin) {
     buzzer_pin = pin;
     
     // Configure GPIO for PWM
@@ -56,6 +57,9 @@ void buzzer_play_tone(uint32_t frequency, uint32_t duration_ms) {
     if (wrap > 65535) wrap = 65535;
     if (wrap < 2) wrap = 2;
     
+    // Store wrap for later use
+    current_wrap = wrap;
+    
     // Configure PWM
     pwm_set_clkdiv(pwm_slice, (float)divider);
     pwm_set_wrap(pwm_slice, wrap - 1);
@@ -92,10 +96,10 @@ void buzzer_play_note(uint32_t note, uint32_t duration_ms) {
     buzzer_play_tone(note, duration_ms);
 }
 
-void buzzer_play_melody(const uint32_t *frequencies, const uint32_t *durations, uint note_count) {
+void buzzer_play_melody(const uint32_t *frequencies, const uint32_t *durations, unsigned int note_count) {
     if (!buzzer_initialized) return;
     
-    for (uint i = 0; i < note_count; i++) {
+    for (unsigned int i = 0; i < note_count; i++) {
         if (frequencies[i] > 0) {
             buzzer_play_tone(frequencies[i], durations[i]);
         } else {
@@ -113,10 +117,9 @@ void buzzer_set_volume(uint8_t duty) {
     if (duty > 100) duty = 100;
     current_volume = duty;
     
-    // If PWM is currently running, update the level
-    if (buzzer_initialized && pwm_is_enabled(pwm_slice)) {
-        uint32_t wrap = pwm_get_wrap(pwm_slice) + 1;
-        uint32_t level = (wrap * current_volume) / 100;
+    // If PWM is currently running and we have a wrap value, update the level
+    if (buzzer_initialized && current_wrap > 0) {
+        uint32_t level = (current_wrap * current_volume) / 100;
         pwm_set_chan_level(pwm_slice, pwm_channel, level);
     }
 }

@@ -32,7 +32,7 @@
  * 
  * @param pin GPIO pin number for the buzzer
  */
-void buzzer_pwm_init(uint pin);
+void buzzer_pwm_init(unsigned int pin);
 
 /**
  * Play a tone at a specific frequency
@@ -70,7 +70,7 @@ void buzzer_play_note(uint32_t note, uint32_t duration_ms);
  * @param durations Array of durations in ms
  * @param note_count Number of notes to play
  */
-void buzzer_play_melody(const uint32_t *frequencies, const uint32_t *durations, uint note_count);
+void buzzer_play_melody(const uint32_t *frequencies, const uint32_t *durations, unsigned int note_count);
 
 /**
  * Set PWM duty cycle (volume control)

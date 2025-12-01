@@ -1,52 +1,34 @@
 // #include <stdio.h>
 // #include <stdbool.h>
 // #include "pico/stdlib.h"
-// #include "hardware/gpio.h"
 // #include "rfid_reader_uart.h"
-
-// // IRQ pin configuration
-// #define PN532_IRQ_PIN 2  // Connect PN532 IRQ to GPIO 2
-
-// // Flag set by interrupt
-// volatile bool tag_detected_flag = false;
-
-// // GPIO interrupt callback
-// void pn532_irq_callback(uint gpio, uint32_t events) {
-//     if (gpio == PN532_IRQ_PIN && (events & GPIO_IRQ_EDGE_FALL)) {
-//         // IRQ pin went LOW - tag detected or data ready
-//         tag_detected_flag = true;
-//     }
-// }
 
 // int main() {
 //     stdio_init_all();
+    
+//     // Give time for USB serial to connect
 //     sleep_ms(3000);
     
 //     printf("\r\n");
 //     printf("=====================================\r\n");
-//     printf("   PN532 NFC Reader (INTERRUPT MODE) \r\n");
+//     printf("   PN532 NFC/RFID Reader Test (UART) \r\n");
 //     printf("         RP2350 Proton Board         \r\n");
 //     printf("=====================================\r\n");
 //     printf("\r\n");
     
-//     // Initialize PN532
 //     printf("Initializing PN532 over UART...\r\n");
+//     printf("UART Configuration:\r\n");
+//     printf(" - TX: GPIO 32 (to PN532 RX)\r\n");
+//     printf(" - RX: GPIO 33 (from PN532 TX)\r\n");
+//     printf(" - Baud: 115200\r\n");
+//     printf(" - Module switches: Both OFF\r\n");
+//     printf("\r\n");
+    
 //     pn532_uart_reader_init();
     
-//     // Setup IRQ pin
-//     printf("Setting up IRQ pin on GPIO %d...\r\n", PN532_IRQ_PIN);
-//     gpio_init(PN532_IRQ_PIN);
-//     gpio_set_dir(PN532_IRQ_PIN, GPIO_IN);
-//     gpio_pull_up(PN532_IRQ_PIN);  // IRQ is active LOW
-    
-//     // Enable interrupt on falling edge (IRQ goes LOW when tag detected)
-//     gpio_set_irq_enabled_with_callback(PN532_IRQ_PIN, 
-//                                        GPIO_IRQ_EDGE_FALL, 
-//                                        true, 
-//                                        &pn532_irq_callback);
-    
-//     printf("IRQ configured. Waiting for tags...\r\n");
-//     printf("MCU will sleep until tag detected!\r\n");
+//     printf("\r\n");
+//     printf("Starting tag detection loop...\r\n");
+//     printf("Place an NFC/RFID tag near the reader.\r\n");
 //     printf("-------------------------------------\r\n");
     
 //     uint8_t uid[10];
@@ -55,128 +37,268 @@
 //     uint8_t last_uid_len = 0;
 //     bool tag_present = false;
     
-//     // Send initial tag detection command to arm the IRQ
-//     printf("Arming PN532 for interrupt mode...\r\n");
-//     pn532_uart_read_uid(uid, &uid_len);  // This will timeout, but arms IRQ
-    
 //     while (1) {
-//         // Check if interrupt flag was set
-//         if (tag_detected_flag) {
-//             tag_detected_flag = false;  // Clear flag
-            
-//             printf("IRQ triggered! Reading tag...\r\n");
-            
-//             // Try to read the tag
-//             if (pn532_uart_read_uid(uid, &uid_len)) {
-//                 // Check if this is a new tag
-//                 bool new_tag = false;
-//                 if (!tag_present || uid_len != last_uid_len) {
-//                     new_tag = true;
-//                 } else {
-//                     for (uint8_t i = 0; i < uid_len; i++) {
-//                         if (uid[i] != last_uid[i]) {
-//                             new_tag = true;
-//                             break;
-//                         }
-//                     }
-//                 }
-                
-//                 if (new_tag) {
-//                     printf("TAG DETECTED - UID: ");
-//                     for (uint8_t i = 0; i < uid_len; i++) {
-//                         if (i > 0) printf(":");
-//                         printf("%02X", uid[i]);
-//                     }
-//                     printf(" (Length: %d bytes)\r\n", uid_len);
-                    
-//                     // Save UID
-//                     last_uid_len = uid_len;
-//                     for (uint8_t i = 0; i < uid_len; i++) {
-//                         last_uid[i] = uid[i];
-//                     }
-//                 }
-//                 tag_present = true;
-                
-//             } else {
-//                 if (tag_present) {
-//                     printf("Tag removed\r\n");
-//                     tag_present = false;
-//                     last_uid_len = 0;
-//                 }
+//         if (pn532_uart_read_uid(uid, &uid_len)) {
+//             // ALWAYS print the UID every time we read it
+//             printf("TAG - UID: ");
+//             for (uint8_t i = 0; i < uid_len; i++) {
+//                 if (i > 0) printf(":");
+//                 printf("%02X", uid[i]);
 //             }
+//             printf(" (Length: %d bytes)\r\n", uid_len);
             
-//             // Re-arm for next detection
-//             // (Send another detection command)
-//             pn532_uart_read_uid(uid, &uid_len);
+//             tag_present = true;
+//         } else {
+//             if (tag_present) {
+//                 printf("Tag removed\r\n");
+//                 tag_present = false;
+//             }
 //         }
         
-//         // Sleep - CPU is idle until interrupt!
-//         // This saves A LOT of power compared to polling
-//         sleep_ms(100);  // Check flag periodically
-        
-//         // Could also use WFI (Wait For Interrupt) for even lower power:
-//         // __wfi();
+//         sleep_ms(1000);  // Poll 4 times per second
 //     }
 // }
 
-
 #include <stdio.h>
-#include <stdbool.h>
 #include "pico/stdlib.h"
-#include "rfid_reader_uart.h"
+#include "buzzer_pwm.h"
+
+// Buzzer GPIO pin configuration
+#define BUZZER_PIN 15  // Change this to whatever pin your buzzer is connected to
 
 int main() {
+    // Initialize USB serial
     stdio_init_all();
     
-    // Give time for USB serial to connect
-    sleep_ms(3000);
+    // Wait for USB serial connection
+    sleep_ms(2000);
     
     printf("\r\n");
-    printf("=====================================\r\n");
-    printf("   PN532 NFC/RFID Reader Test (UART) \r\n");
-    printf("         RP2350 Proton Board         \r\n");
-    printf("=====================================\r\n");
+    printf("========================================\r\n");
+    printf("    PWM Buzzer Control Test Program    \r\n");
+    printf("           RP2350 Proton Board          \r\n");
+    printf("========================================\r\n");
     printf("\r\n");
     
-    printf("Initializing PN532 over UART...\r\n");
-    printf("UART Configuration:\r\n");
-    printf(" - TX: GPIO 32 (to PN532 RX)\r\n");
-    printf(" - RX: GPIO 33 (from PN532 TX)\r\n");
-    printf(" - Baud: 115200\r\n");
-    printf(" - Module switches: Both OFF\r\n");
+    // Initialize PWM buzzer
+    printf("Initializing PWM buzzer on GPIO %d...\r\n", BUZZER_PIN);
+    buzzer_pwm_init(BUZZER_PIN);
+    printf("PWM Buzzer initialized!\r\n\r\n");
+    
+    // Instructions
+    printf("Commands:\r\n");
+    printf("Frequency Beeps:\r\n");
+    printf("  1 - Low beep (500 Hz)\r\n");
+    printf("  2 - Medium beep (1000 Hz)\r\n");
+    printf("  3 - High beep (2000 Hz)\r\n");
+    printf("  4 - Alarm sound (2500 Hz)\r\n");
     printf("\r\n");
-    
-    pn532_uart_reader_init();
-    
+    printf("Musical Notes:\r\n");
+    printf("  q - C4 (262 Hz)\r\n");
+    printf("  w - D4 (294 Hz)\r\n");
+    printf("  e - E4 (330 Hz)\r\n");
+    printf("  r - F4 (349 Hz)\r\n");
+    printf("  t - G4 (392 Hz)\r\n");
+    printf("  y - A4 (440 Hz)\r\n");
+    printf("  u - B4 (494 Hz)\r\n");
+    printf("  i - C5 (523 Hz)\r\n");
     printf("\r\n");
-    printf("Starting tag detection loop...\r\n");
-    printf("Place an NFC/RFID tag near the reader.\r\n");
-    printf("-------------------------------------\r\n");
+    printf("Melodies:\r\n");
+    printf("  m - Play simple melody\r\n");
+    printf("  s - Startup sound\r\n");
+    printf("  a - Success sound\r\n");
+    printf("  x - Error sound\r\n");
+    printf("\r\n");
+    printf("Volume:\r\n");
+    printf("  + - Increase volume\r\n");
+    printf("  - - Decrease volume\r\n");
+    printf("\r\n");
+    printf("Control:\r\n");
+    printf("  o - Turn ON continuous tone (1kHz)\r\n");
+    printf("  f - Turn OFF (stop)\r\n");
+    printf("  h - Show help\r\n");
+    printf("========================================\r\n\r\n");
     
-    uint8_t uid[10];
-    uint8_t uid_len;
-    uint8_t last_uid[10];
-    uint8_t last_uid_len = 0;
-    bool tag_present = false;
+    printf("Ready! Press a key...\r\n");
+    
+    uint8_t volume = 50;  // Current volume level
     
     while (1) {
-        if (pn532_uart_read_uid(uid, &uid_len)) {
-            // ALWAYS print the UID every time we read it
-            printf("TAG - UID: ");
-            for (uint8_t i = 0; i < uid_len; i++) {
-                if (i > 0) printf(":");
-                printf("%02X", uid[i]);
-            }
-            printf(" (Length: %d bytes)\r\n", uid_len);
+        // Check if a character is available
+        int c = getchar_timeout_us(0);  // Non-blocking read
+        
+        if (c != PICO_ERROR_TIMEOUT) {
+            char input = (char)c;
             
-            tag_present = true;
-        } else {
-            if (tag_present) {
-                printf("Tag removed\r\n");
-                tag_present = false;
+            switch (input) {
+                // Frequency beeps
+                case '1':
+                    printf("Low beep (500 Hz)\r\n");
+                    buzzer_beep(FREQ_LOW, 200);
+                    break;
+                    
+                case '2':
+                    printf("Medium beep (1000 Hz)\r\n");
+                    buzzer_beep(FREQ_MEDIUM, 200);
+                    break;
+                    
+                case '3':
+                    printf("High beep (2000 Hz)\r\n");
+                    buzzer_beep(FREQ_HIGH, 200);
+                    break;
+                    
+                case '4':
+                    printf("Alarm sound (2500 Hz)\r\n");
+                    buzzer_beep(FREQ_ALARM, 500);
+                    break;
+                
+                // Musical notes
+                case 'q':
+                case 'Q':
+                    printf("C4 (262 Hz)\r\n");
+                    buzzer_play_note(NOTE_C4, 300);
+                    break;
+                    
+                case 'w':
+                case 'W':
+                    printf("D4 (294 Hz)\r\n");
+                    buzzer_play_note(NOTE_D4, 300);
+                    break;
+                    
+                case 'e':
+                case 'E':
+                    printf("E4 (330 Hz)\r\n");
+                    buzzer_play_note(NOTE_E4, 300);
+                    break;
+                    
+                case 'r':
+                case 'R':
+                    printf("F4 (349 Hz)\r\n");
+                    buzzer_play_note(NOTE_F4, 300);
+                    break;
+                    
+                case 't':
+                case 'T':
+                    printf("G4 (392 Hz)\r\n");
+                    buzzer_play_note(NOTE_G4, 300);
+                    break;
+                    
+                case 'y':
+                case 'Y':
+                    printf("A4 (440 Hz)\r\n");
+                    buzzer_play_note(NOTE_A4, 300);
+                    break;
+                    
+                case 'u':
+                case 'U':
+                    printf("B4 (494 Hz)\r\n");
+                    buzzer_play_note(NOTE_B4, 300);
+                    break;
+                    
+                case 'i':
+                case 'I':
+                    printf("C5 (523 Hz)\r\n");
+                    buzzer_play_note(NOTE_C5, 300);
+                    break;
+                
+                // Melodies
+                case 'm':
+                case 'M':
+                    printf("Playing melody...\r\n");
+                    {
+                        const uint32_t melody[] = {NOTE_C4, NOTE_E4, NOTE_G4, NOTE_C5};
+                        const uint32_t durations[] = {200, 200, 200, 400};
+                        buzzer_play_melody(melody, durations, 4);
+                    }
+                    printf("Done!\r\n");
+                    break;
+                    
+                case 's':
+                case 'S':
+                    printf("Startup sound!\r\n");
+                    {
+                        const uint32_t startup[] = {FREQ_LOW, FREQ_MEDIUM, FREQ_HIGH};
+                        const uint32_t durations[] = {100, 100, 200};
+                        buzzer_play_melody(startup, durations, 3);
+                    }
+                    break;
+                    
+                case 'a':
+                case 'A':
+                    printf("Success sound!\r\n");
+                    {
+                        const uint32_t success[] = {NOTE_C5, NOTE_E5, NOTE_G5};
+                        const uint32_t durations[] = {100, 100, 300};
+                        buzzer_play_melody(success, durations, 3);
+                    }
+                    break;
+                    
+                case 'x':
+                case 'X':
+                    printf("Error sound!\r\n");
+                    {
+                        const uint32_t error[] = {FREQ_HIGH, 0, FREQ_HIGH};
+                        const uint32_t durations[] = {100, 50, 100};
+                        buzzer_play_melody(error, durations, 3);
+                    }
+                    break;
+                
+                // Volume control
+                case '+':
+                case '=':
+                    volume += 10;
+                    if (volume > 100) volume = 100;
+                    buzzer_set_volume(volume);
+                    printf("Volume: %d%%\r\n", volume);
+                    buzzer_beep(FREQ_MEDIUM, 100);
+                    break;
+                    
+                case '-':
+                case '_':
+                    if (volume >= 10) volume -= 10;
+                    buzzer_set_volume(volume);
+                    printf("Volume: %d%%\r\n", volume);
+                    buzzer_beep(FREQ_MEDIUM, 100);
+                    break;
+                
+                // Control
+                case 'o':
+                case 'O':
+                    printf("Buzzer ON (1000 Hz continuous, press 'f' to stop)\r\n");
+                    buzzer_play_tone(FREQ_MEDIUM, 0);  // 0 = continuous
+                    break;
+                    
+                case 'f':
+                case 'F':
+                    printf("Buzzer OFF\r\n");
+                    buzzer_stop();
+                    break;
+                    
+                case 'h':
+                case 'H':
+                    printf("\r\nCommands:\r\n");
+                    printf("  1-4: Different frequency beeps\r\n");
+                    printf("  q-i: Musical notes (C4-C5)\r\n");
+                    printf("  m: Play melody\r\n");
+                    printf("  s/a/x: Sound effects\r\n");
+                    printf("  +/-: Volume control\r\n");
+                    printf("  o: ON, f: OFF\r\n\r\n");
+                    break;
+                    
+                case '\r':
+                case '\n':
+                    // Ignore newlines
+                    break;
+                    
+                default:
+                    printf("Unknown: '%c' (press 'h' for help)\r\n", input);
+                    break;
             }
         }
         
-        sleep_ms(1000);  // Poll 4 times per second
+        // Small delay
+        sleep_ms(10);
     }
+    
+    return 0;
 }

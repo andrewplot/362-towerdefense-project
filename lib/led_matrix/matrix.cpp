@@ -10,6 +10,7 @@
 
 #define MATRIX_ROWS 32
 #define MATRIX_COLS 64
+#define GAMMA 2.9
 
 Color framebuffer[MATRIX_ROWS][MATRIX_COLS];
 static uint8_t gamma_lut[256];
@@ -44,7 +45,10 @@ void init_matrix_pins() {
 
         gpio_init(pin);
         gpio_set_dir (pin, GPIO_OUT);
+        gpio_set_slew_rate(pin, GPIO_SLEW_RATE_FAST);
+        gpio_set_drive_strength(pin, GPIO_DRIVE_STRENGTH_8MA);
     }
+    sio_hw->gpio_clr = 0xFFFE0;
 }
 
 void init_framebuffer(Color color) {
@@ -56,12 +60,11 @@ void init_framebuffer(Color color) {
 }
 
 void init_gamma_lut() {
-    float gamma = 3;
-
     for (int i = 0; i < 256; i++) {
-        gamma_lut[i] = (uint8_t)(pow(i / 255.0, gamma) * 255.0);
+        gamma_lut[i] = (uint8_t)(pow(i / 255.0, GAMMA) * 255.0);
     }
 }
+
 
 void init_matrix() {
     init_matrix_pins();
@@ -115,7 +118,7 @@ void render_frame() {
             sio_hw->gpio_clr = (1u << OE);
             sio_hw->gpio_clr = (1u << 25);
             
-            sleep_us(6 * (1 << plane));
+            sleep_us(12 * (1 << plane));
         }
     }
 }
@@ -148,7 +151,6 @@ void set_path() {
         framebuffer[14][col] = PATH;
         framebuffer[15][col] = PATH;
         framebuffer[16][col] = PATH;
-
     }
 
     for (int row = 5; row < 17; row++) {

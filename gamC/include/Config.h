@@ -1,0 +1,32 @@
+PSEUDOCODE Config.h:
+
+// Display constants
+CONST uint8_t MATRIX_WIDTH = 64
+CONST uint8_t MATRIX_HEIGHT = 32
+CONST uint8_t PIXEL_BRIGHTNESS = 128  // 0-255
+
+// Game timing (in milliseconds)
+CONST uint16_t FRAME_RATE = 30        // Target FPS
+CONST uint16_t FRAME_TIME_MS = 1000 / FRAME_RATE
+
+// Starting resources
+CONST uint16_t STARTING_MONEY = 200
+CONST uint8_t STARTING_LIVES = 20
+
+// Memory pool sizes (critical for embedded)
+CONST uint8_t MAX_ENEMIES = 32
+CONST uint8_t MAX_TOWERS = 10
+CONST uint8_t MAX_PROJECTILES = 64
+CONST uint8_t MAX_ABILITIES = 4
+CONST uint8_t MAX_PATH_POINTS = 20
+CONST uint8_t MAX_TOWER_SLOTS = 10
+
+// Tower costs
+CONST uint16_t TOWER_MACHINE_GUN_COST = 30
+CONST uint16_t TOWER_CANNON_COST = 50
+CONST uint16_t TOWER_SNIPER_COST = 65
+CONST uint16_t TOWER_RADAR_COST = 40
+
+// Ability costs
+CONST uint16_t ABILITY_APACHE_COST = 50
+CONST uint16_t ABILITY_BOMBER_COST = 75

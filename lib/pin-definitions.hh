@@ -25,6 +25,9 @@
 #define OLED_SPI_SCK 26
 #define OLED_SPI_TX  27
 
+// Buzzer
+#define BUZZER 28 
+
 // I2C for RFID
 #define RFID_TX      0
 #define RFID_SDA     1

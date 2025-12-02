@@ -10,6 +10,7 @@
 #include "matrix.hh"
 #include "oled_display.hh"
 #include "joystick.hh"
+#include "buzzer_pwm.hh"
 
 TowerType scanned_tower = blank;
 char *towers[] = {"Dart Monkey", "Ninja Monkey", "Bomb Tower", "Sniper Monkey"};
@@ -51,6 +52,7 @@ void init_peripherals() {
     init_rfid();
     init_joystick();
     init_oled();
+    buzzer_pwm_init();
 }
 
 void render_matrix() {
@@ -67,6 +69,8 @@ int main() {
     init_peripherals();
     
     oled_print("Hello \1", "I have mucho \2");
+    start_sound();
+
     for (;;) {
         sample_peripherals();
 
@@ -75,14 +79,6 @@ int main() {
     }
     
 }
-
-
-
-// Tower towers[13] = {};
-// const char* welcome[2] = {"Round 1  $: 999 ", "         H: 100 " };
-// const char* purchase[2] = {"Ninja: 100      ", " Yes        No "};
-
-// int tower_idx = 0;
 
 // void init_monkeys() {
 //     towers[0].type = blank;

@@ -117,23 +117,34 @@ int main() {
             switch (input) {
                 // Sound effects
                 case '1':
-                    printf("Playing Sound Effect 1...\r\n");
+                    printf("Playing Victory Sound...\r\n");
                     buzzer_sound_effect_1();
                     printf("Done!\r\n");
                     break;
                     
                 case '2':
-                    printf("Playing Sound Effect 2...\r\n");
+                    printf("Playing Balloon Pop Sound...\r\n");
                     buzzer_sound_effect_2();
                     printf("Done!\r\n");
                     break;
                     
                 case '3':
-                    printf("Playing Sound Effect 3...\r\n");
+                    printf("Playing Error Sound...\r\n");
                     buzzer_sound_effect_3();
                     printf("Done!\r\n");
                     break;
-                
+
+                case '4':
+                    printf("Playing Ligma Sound...\r\n");
+                    buzzer_sound_effect_4();
+                    printf("Done!\r\n");
+                    break;
+
+                case '5':
+                    printf("Playing Wave Start Sound...\r\n");
+                    buzzer_sound_effect_5();
+                    printf("Done!\r\n");
+                    break;
                 // Volume control
                 case '+':
                 case '=':

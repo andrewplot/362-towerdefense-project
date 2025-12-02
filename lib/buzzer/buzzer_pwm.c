@@ -129,14 +129,14 @@ void buzzer_set_volume(uint8_t duty) {
 }
 
 void buzzer_sound_effect_1(void) {
-    // Mario-style melody
-    const uint32_t melody[] = {330, 262, 330, 410, 550};
+    // Victory
+    const uint32_t melody[] = {NOTE_E4, NOTE_C4, NOTE_E4, NOTE_G4, NOTE_C5};
     const uint32_t durations[] = {150, 150, 150, 150, 400};
     buzzer_play_melody(melody, durations, 5);
 }
 
 void buzzer_sound_effect_2(void) {
-    // Quick two-tone effect
+    // Balloon Pop
     const uint32_t melody[] = {330, 250};
     const uint32_t durations[] = {70, 90};
     buzzer_play_melody(melody, durations, 2);
@@ -147,4 +147,16 @@ void buzzer_sound_effect_3(void) {
     const uint32_t error[] = {FREQ_HIGH, 0, FREQ_HIGH};
     const uint32_t durations[] = {100, 50, 100};
     buzzer_play_melody(error, durations, 3);
+}
+
+void buzzer_sound_effect_4(void){
+    const uint32_t lose[] = {NOTE_B4, NOTE_A4S, NOTE_G4S};
+    const uint32_t durations[] = {300, 300, 600};
+    buzzer_play_melody(lose, durations, 3);
+}
+
+void buzzer_sound_effect_5(void){
+    const uint32_t error[] = {NOTE_D4, 0, NOTE_D4, 0, NOTE_D4, NOTE_G4, 0, NOTE_G4, 0, NOTE_G4};
+    const uint32_t durations[] = {300, 50, 100, 30, 100, 500, 100, 50, 50, 50};
+    buzzer_play_melody(error, durations, 10); 
 }

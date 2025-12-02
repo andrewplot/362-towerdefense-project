@@ -10,7 +10,9 @@
 #define NOTE_E4  330
 #define NOTE_F4  349
 #define NOTE_G4  392
+#define NOTE_G4S  415
 #define NOTE_A4  440
+#define NOTE_A4S  466
 #define NOTE_B4  494
 #define NOTE_C5  523
 #define NOTE_D5  587
@@ -98,5 +100,9 @@ void buzzer_sound_effect_2(void);
  * Play sound effect 3 - Error sound
  */
 void buzzer_sound_effect_3(void);
+
+void buzzer_sound_effect_4(void);
+
+void buzzer_sound_effect_5(void);
 
 #endif // BUZZER_PWM_H

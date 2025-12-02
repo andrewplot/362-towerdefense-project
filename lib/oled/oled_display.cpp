@@ -50,7 +50,7 @@ void demo_heart() {
     oled_create_char(0, heart); // store heart at slot 0
     oled_write_char(0, 0, 'I');
     oled_write_char(0, 1, ' ');
-    oled_write_char(0, 2, 0);   // custom heart char
+    oled_write_char(0, 2, 1);   // custom heart char CGRAM 1
     oled_write_char(0, 3, ' ');
     oled_write_char(0, 4, 'U');
 }
@@ -74,6 +74,8 @@ void init_oled() {
     send_spi_cmd(spi1, 0x01);
     sleep_ms(2);
     send_spi_cmd(spi1, 0x06);
+
+    oled_create_char(1, heart); // heart becomes CGRAM 1
 }
 
 

@@ -9,7 +9,7 @@
 #include "joystick.hh"
 
 Tower towers[13] = {};
-const char* welcome[2] = {"Round 1  $: 999 ", "         H: 100 " };
+const char* welcome[2] = {"Round 1  $: 999 ", "         \1: 100 " };
 const char* purchase[2] = {"Ninja: 100      ", " Yes        No "};
 
 int tower_idx = 0;
@@ -92,7 +92,7 @@ void init_monkeys() {
 
 void init_base_game() {
     init_oled();
-    print_message(purchase);
+    print_message(welcome);
     
     init_js();
 

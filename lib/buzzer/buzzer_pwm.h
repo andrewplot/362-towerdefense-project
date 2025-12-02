@@ -20,6 +20,16 @@
 #define NOTE_A5  880
 #define NOTE_B5  988
 #define NOTE_C6  1047
+#define NOTE_CS4  277   // C# (C sharp) - A
+#define NOTE_F4   349   // F - D
+#define NOTE_GS4  415   // G# (G sharp) - G
+#define NOTE_C5   523   // C - J
+#define NOTE_CS5  554   // C# (C sharp) - K
+#define NOTE_D4   294   // D - from C#4
+#define NOTE_FS4  370   // F# (F sharp) - from F4
+#define NOTE_A4   440   // A - from G#4
+#define NOTE_CS5  554   // C# (C sharp) - from C5
+#define NOTE_D5   587   // D
 
 // Common beep frequencies
 #define FREQ_LOW     500   // Low beep

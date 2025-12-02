@@ -70,12 +70,6 @@ void buzzer_play_tone(uint32_t frequency, uint32_t duration_ms) {
     
     // Enable PWM
     pwm_set_enabled(pwm_slice, true);
-    
-    // If duration specified, wait then stop
-    if (duration_ms > 0) {
-        sleep_ms(duration_ms);
-        buzzer_stop();
-    }
 }
 
 void buzzer_stop(void) {
@@ -89,11 +83,19 @@ void buzzer_stop(void) {
 }
 
 void buzzer_beep(uint32_t frequency, uint32_t duration_ms) {
-    buzzer_play_tone(frequency, duration_ms);
+    buzzer_play_tone(frequency, 0);  // Start continuous tone
+    if (duration_ms > 0) {
+        sleep_ms(duration_ms);
+        buzzer_stop();
+    }
 }
 
 void buzzer_play_note(uint32_t note, uint32_t duration_ms) {
-    buzzer_play_tone(note, duration_ms);
+    buzzer_play_tone(note, 0);  // Start continuous tone
+    if (duration_ms > 0) {
+        sleep_ms(duration_ms);
+        buzzer_stop();
+    }
 }
 
 void buzzer_play_melody(const uint32_t *frequencies, const uint32_t *durations, unsigned int note_count) {
@@ -101,7 +103,9 @@ void buzzer_play_melody(const uint32_t *frequencies, const uint32_t *durations, 
     
     for (unsigned int i = 0; i < note_count; i++) {
         if (frequencies[i] > 0) {
-            buzzer_play_tone(frequencies[i], durations[i]);
+            buzzer_play_tone(frequencies[i], 0);  // Start tone
+            sleep_ms(durations[i]);
+            buzzer_stop();
         } else {
             // Frequency of 0 = rest/silence
             buzzer_stop();

@@ -10,7 +10,7 @@
 //     sleep_ms(3000);
     
 //     printf("\r\n");
-//     printf("=====================================\r\n");
+//     printf("=====================================\r\n");qq
 //     printf("   PN532 NFC/RFID Reader Test (UART) \r\n");
 //     printf("         RP2350 Proton Board         \r\n");
 //     printf("=====================================\r\n");
@@ -121,7 +121,7 @@ int main() {
     
     printf("Ready! Press a key...\r\n");
     
-    uint8_t volume = 50;  // Current volume level
+    uint8_t volume = 1;  // Current volume level
     
     while (1) {
         // Check if a character is available
@@ -206,32 +206,60 @@ int main() {
                 case 'M':
                     printf("Playing melody...\r\n");
                     {
-                        const uint32_t melody[] = {NOTE_C4, NOTE_E4, NOTE_G4, NOTE_C5};
-                        const uint32_t durations[] = {200, 200, 200, 400};
-                        buzzer_play_melody(melody, durations, 4);
+                        const uint32_t melody[] = {NOTE_E4, NOTE_C4, NOTE_E4, 410, 550, 410, 0, 
+                                                   NOTE_F4, NOTE_CS4, NOTE_F4, 426, 568, 426, 0,
+                                                   NOTE_FS4, NOTE_D4, NOTE_FS4, NOTE_A4, 590, 0, 590, 640    
+                                                };
+                        const uint32_t durations[] = {150, 150, 150, 150, 400, 250, 20, 
+                                                      150, 150, 150, 150, 400, 250, 20, 
+                                                      150, 150, 150, 150, 400, 20, 380, 800 };
+                        buzzer_play_melody(melody, durations, 22);
                     }
                     printf("Done!\r\n");
                     break;
                     
                 case 's':
                 case 'S':
-                    printf("Startup sound!\r\n");
+                    printf("Playing melody...\r\n");
                     {
-                        const uint32_t startup[] = {FREQ_LOW, FREQ_MEDIUM, FREQ_HIGH};
-                        const uint32_t durations[] = {100, 100, 200};
-                        buzzer_play_melody(startup, durations, 3);
+                        const uint32_t melody[] = { 330, 250};
+                        const uint32_t durations[] = {70, 90};
+                        buzzer_play_melody(melody, durations, 2);
                     }
+                    printf("Done!\r\n");
                     break;
                     
                 case 'a':
                 case 'A':
-                    printf("Success sound!\r\n");
+                    printf("Playing melody...\r\n");
                     {
-                        const uint32_t success[] = {NOTE_C5, NOTE_E5, NOTE_G5};
-                        const uint32_t durations[] = {100, 100, 300};
-                        buzzer_play_melody(success, durations, 3);
+                        const uint32_t melody[] = { NOTE_C4, NOTE_E4, NOTE_G4, NOTE_C5};
+                        const uint32_t durations[] = {200, 200, 200, 200};
+                        buzzer_play_melody(melody, durations, 4);
                     }
+                    printf("Done!\r\n");
                     break;
+                case 'd':
+                case 'D':
+                    printf("C5 (523 Hz)\r\n");
+                    buzzer_play_note(NOTE_F4, 300);
+                    break;
+                case 'g':
+                case 'G':
+                    printf("C5 (523 Hz)\r\n");
+                    buzzer_play_note(NOTE_GS4 , 300);
+                    break;
+                case 'j':
+                case 'J':
+                    printf("C5 (523 Hz)\r\n");
+                    buzzer_play_note(NOTE_C5 , 300);
+                    break;
+                case 'k':
+                case 'K':
+                    printf("C5 (523 Hz)\r\n");
+                    buzzer_play_note(NOTE_CS5, 300);
+                    break;
+
                     
                 case 'x':
                 case 'X':

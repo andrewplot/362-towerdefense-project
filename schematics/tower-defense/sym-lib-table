@@ -1,0 +1,4 @@
+(sym_lib_table
+  (version 7)
+  (lib (name "tower_defense")(type "KiCad")(uri "${KIPRJMOD}/libraries/tower_defense.kicad_sym")(options "")(descr ""))
+)

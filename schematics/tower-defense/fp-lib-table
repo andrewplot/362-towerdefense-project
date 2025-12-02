@@ -1,0 +1,4 @@
+(fp_lib_table
+  (version 7)
+  (lib (name "Tower_Defense")(type "KiCad")(uri "${KIPRJMOD}/libraries/tower_defense.pretty")(options "")(descr ""))
+)

@@ -126,3 +126,32 @@ int main() {
     return 0;
 }
 */
+
+/*
+Python version = “full PC game prototype”
+
+    Multiple waves with proper progression.
+
+    Map loaded from JSON with decorations and configurable path/slots/waves.
+
+    Special abilities (Apache, bomber).
+
+    Banner plane between rounds.
+
+    Full splitter behavior.
+
+    More UI feedback (tower ranges, wave info, etc.).
+
+C++ version (now) = “core mechanics port for embedded hardware”
+
+Same basic enemy + tower types and rules.
+
+Same idea of invisible/ghost enemies + radar towers.
+
+Same concept of projectiles, splash damage, money/lives.
+
+Simpler spawn logic (continuous, not wave-based).
+
+No abilities, no banner plane, no JSON map loading, no split-child spawning yet.
+
+Much simpler visuals and controls.*/

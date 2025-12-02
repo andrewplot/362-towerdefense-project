@@ -1,3 +1,4 @@
+#include <string.h>
 #include "pico/stdlib.h"
 #include "hardware/spi.h"
 #include "hardware/dma.h"
@@ -13,6 +14,17 @@ static const uint8_t heart[8] = {
     0b01110,
     0b00100,
     0b00000,
+    0b00000
+};
+
+static const uint8_t dollar[8] = {
+    0b00100,
+    0b11111,
+    0b10100,
+    0b11111,
+    0b00101,
+    0b11111,
+    0b00100,
     0b00000
 };
 
@@ -46,16 +58,6 @@ void oled_create_char(uint8_t location, const uint8_t *pattern) {
     }
 }
 
-void demo_heart() {
-    oled_create_char(0, heart); // store heart at slot 0
-    oled_write_char(0, 0, 'I');
-    oled_write_char(0, 1, ' ');
-    oled_write_char(0, 2, 1);   // custom heart char CGRAM 1
-    oled_write_char(0, 3, ' ');
-    oled_write_char(0, 4, 'U');
-}
-
-
 void init_oled_pins() {
     spi_init(spi1, 10000);
     spi_set_format(spi1, 10, SPI_CPOL_0, SPI_CPHA_0, SPI_MSB_FIRST);
@@ -76,9 +78,8 @@ void init_oled() {
     send_spi_cmd(spi1, 0x06);
 
     oled_create_char(1, heart); // heart becomes CGRAM 1
+    oled_create_char(2, dollar);
 }
-
-
 
 void cd_write_line(int row, const char *s) {
     int addr_cmd = (row == 0) ? 0x80 : 0xC0;
@@ -91,7 +92,25 @@ void cd_write_line(int row, const char *s) {
     }
 }
 
-void print_message(const char *lines[2]) {
-    cd_write_line(0, lines ? lines[0] : "");
-    cd_write_line(1, lines ? lines[1] : "");
+void oled_print(const char *str1, const char *str2) {
+    char buf1[17];
+    char buf2[17];
+
+    if (!str1) str1 = "";
+    if (!str2) str2 = "";
+
+    size_t len1 = strlen(str1);
+    if (len1 > 16) len1 = 16;
+    memcpy(buf1, str1, len1);
+    memset(buf1 + len1, ' ', 16 - len1);
+    buf1[16] = '\0';
+
+    size_t len2 = strlen(str2);
+    if (len2 > 16) len2 = 16;
+    memcpy(buf2, str2, len2);
+    memset(buf2 + len2, ' ', 16 - len2);
+    buf2[16] = '\0';
+
+    cd_write_line(0, buf1);
+    cd_write_line(1, buf2);
 }

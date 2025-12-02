@@ -130,13 +130,9 @@ void buzzer_set_volume(uint8_t duty) {
 
 void buzzer_sound_effect_1(void) {
     // Mario-style melody
-    const uint32_t melody[] = {330, 262, 330, 410, 550, 410, 0, 
-                               349, 277, 349, 426, 568, 426, 0,
-                               370, 294, 370, 440, 590, 0, 590, 640};
-    const uint32_t durations[] = {150, 150, 150, 150, 400, 250, 20, 
-                                  150, 150, 150, 150, 400, 250, 20, 
-                                  150, 150, 150, 150, 400, 20, 380, 800};
-    buzzer_play_melody(melody, durations, 22);
+    const uint32_t melody[] = {330, 262, 330, 410, 550};
+    const uint32_t durations[] = {150, 150, 150, 150, 400};
+    buzzer_play_melody(melody, durations, 5);
 }
 
 void buzzer_sound_effect_2(void) {

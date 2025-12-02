@@ -53,11 +53,16 @@ void init_peripherals() {
     init_joystick();
     init_oled();
     buzzer_pwm_init();
+    init_matrix();
 }
 
 void render_matrix() {
     for (;;) {
         render_frame();
+        if (multicore_fifo_rvalid()) {
+            multicore_fifo_pop_blocking();
+            swap_frames();
+        }
     }
 }
 
@@ -68,14 +73,25 @@ int main() {
     sleep_ms(3000);
     init_peripherals();
     
+    multicore_launch_core1(render_matrix);
     oled_print("Hello \1", "I have mucho \2");
     start_sound();
 
     for (;;) {
         sample_peripherals();
+        
+        //render_game by calling set_pixel(x, y, Color)
+        Tower t1;
+        t1.type = ninja;
+        t1.x_pos = 10;
+        t1.y_pos = 10;
 
-        // render_game
-        // call multicore_fifo_push_blocking(1);
+        set_tower(t1);
+
+        multicore_fifo_push_blocking(1);
+        sleep_ms(250);
+        // call multicore_fifo_push_blocking(1); to swap matrix frames
+
     }
     
 }

@@ -78,8 +78,8 @@ void buzzer_stop(void) {
     // Disable PWM
     pwm_set_enabled(pwm_slice, false);
     
-    // Set GPIO low
-    gpio_put(buzzer_pin, 0);
+    // Set PWM level to 0 to ensure silence
+    pwm_set_chan_level(pwm_slice, pwm_channel, 0);
 }
 
 void buzzer_beep(uint32_t frequency, uint32_t duration_ms) {
@@ -126,4 +126,29 @@ void buzzer_set_volume(uint8_t duty) {
         uint32_t level = (current_wrap * current_volume) / 100;
         pwm_set_chan_level(pwm_slice, pwm_channel, level);
     }
+}
+
+void buzzer_sound_effect_1(void) {
+    // Mario-style melody
+    const uint32_t melody[] = {330, 262, 330, 410, 550, 410, 0, 
+                               349, 277, 349, 426, 568, 426, 0,
+                               370, 294, 370, 440, 590, 0, 590, 640};
+    const uint32_t durations[] = {150, 150, 150, 150, 400, 250, 20, 
+                                  150, 150, 150, 150, 400, 250, 20, 
+                                  150, 150, 150, 150, 400, 20, 380, 800};
+    buzzer_play_melody(melody, durations, 22);
+}
+
+void buzzer_sound_effect_2(void) {
+    // Quick two-tone effect
+    const uint32_t melody[] = {330, 250};
+    const uint32_t durations[] = {70, 90};
+    buzzer_play_melody(melody, durations, 2);
+}
+
+void buzzer_sound_effect_3(void) {
+    // Error sound - double beep
+    const uint32_t error[] = {FREQ_HIGH, 0, FREQ_HIGH};
+    const uint32_t durations[] = {100, 50, 100};
+    buzzer_play_melody(error, durations, 3);
 }

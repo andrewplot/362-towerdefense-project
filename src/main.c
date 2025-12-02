@@ -83,31 +83,15 @@ int main() {
     // Initialize PWM buzzer
     printf("Initializing PWM buzzer on GPIO %d...\r\n", BUZZER_PIN);
     buzzer_pwm_init(BUZZER_PIN);
+    buzzer_set_volume(100);  // Set to maximum volume
     printf("PWM Buzzer initialized!\r\n\r\n");
     
     // Instructions
     printf("Commands:\r\n");
-    printf("Frequency Beeps:\r\n");
-    printf("  1 - Low beep (500 Hz)\r\n");
-    printf("  2 - Medium beep (1000 Hz)\r\n");
-    printf("  3 - High beep (2000 Hz)\r\n");
-    printf("  4 - Alarm sound (2500 Hz)\r\n");
-    printf("\r\n");
-    printf("Musical Notes:\r\n");
-    printf("  q - C4 (262 Hz)\r\n");
-    printf("  w - D4 (294 Hz)\r\n");
-    printf("  e - E4 (330 Hz)\r\n");
-    printf("  r - F4 (349 Hz)\r\n");
-    printf("  t - G4 (392 Hz)\r\n");
-    printf("  y - A4 (440 Hz)\r\n");
-    printf("  u - B4 (494 Hz)\r\n");
-    printf("  i - C5 (523 Hz)\r\n");
-    printf("\r\n");
-    printf("Melodies:\r\n");
-    printf("  m - Play simple melody\r\n");
-    printf("  s - Startup sound\r\n");
-    printf("  a - Success sound\r\n");
-    printf("  x - Error sound\r\n");
+    printf("Sound Effects:\r\n");
+    printf("  1 - Sound Effect 1 (Mario-style melody)\r\n");
+    printf("  2 - Sound Effect 2 (Quick two-tone)\r\n");
+    printf("  3 - Sound Effect 3 (Error sound)\r\n");
     printf("\r\n");
     printf("Volume:\r\n");
     printf("  + - Increase volume\r\n");
@@ -121,7 +105,7 @@ int main() {
     
     printf("Ready! Press a key...\r\n");
     
-    uint8_t volume = 1;  // Current volume level
+    uint8_t volume = 100;  // Current volume level
     
     while (1) {
         // Check if a character is available
@@ -131,144 +115,23 @@ int main() {
             char input = (char)c;
             
             switch (input) {
-                // Frequency beeps
+                // Sound effects
                 case '1':
-                    printf("Low beep (500 Hz)\r\n");
-                    buzzer_beep(FREQ_LOW, 200);
+                    printf("Playing Sound Effect 1...\r\n");
+                    buzzer_sound_effect_1();
+                    printf("Done!\r\n");
                     break;
                     
                 case '2':
-                    printf("Medium beep (1000 Hz)\r\n");
-                    buzzer_beep(FREQ_MEDIUM, 200);
+                    printf("Playing Sound Effect 2...\r\n");
+                    buzzer_sound_effect_2();
+                    printf("Done!\r\n");
                     break;
                     
                 case '3':
-                    printf("High beep (2000 Hz)\r\n");
-                    buzzer_beep(FREQ_HIGH, 200);
-                    break;
-                    
-                case '4':
-                    printf("Alarm sound (2500 Hz)\r\n");
-                    buzzer_beep(FREQ_ALARM, 500);
-                    break;
-                
-                // Musical notes
-                case 'q':
-                case 'Q':
-                    printf("C4 (262 Hz)\r\n");
-                    buzzer_play_note(NOTE_C4, 300);
-                    break;
-                    
-                case 'w':
-                case 'W':
-                    printf("D4 (294 Hz)\r\n");
-                    buzzer_play_note(NOTE_D4, 300);
-                    break;
-                    
-                case 'e':
-                case 'E':
-                    printf("E4 (330 Hz)\r\n");
-                    buzzer_play_note(NOTE_E4, 300);
-                    break;
-                    
-                case 'r':
-                case 'R':
-                    printf("F4 (349 Hz)\r\n");
-                    buzzer_play_note(NOTE_F4, 300);
-                    break;
-                    
-                case 't':
-                case 'T':
-                    printf("G4 (392 Hz)\r\n");
-                    buzzer_play_note(NOTE_G4, 300);
-                    break;
-                    
-                case 'y':
-                case 'Y':
-                    printf("A4 (440 Hz)\r\n");
-                    buzzer_play_note(NOTE_A4, 300);
-                    break;
-                    
-                case 'u':
-                case 'U':
-                    printf("B4 (494 Hz)\r\n");
-                    buzzer_play_note(NOTE_B4, 300);
-                    break;
-                    
-                case 'i':
-                case 'I':
-                    printf("C5 (523 Hz)\r\n");
-                    buzzer_play_note(NOTE_C5, 300);
-                    break;
-                
-                // Melodies
-                case 'm':
-                case 'M':
-                    printf("Playing melody...\r\n");
-                    {
-                        const uint32_t melody[] = {NOTE_E4, NOTE_C4, NOTE_E4, 410, 550, 410, 0, 
-                                                   NOTE_F4, NOTE_CS4, NOTE_F4, 426, 568, 426, 0,
-                                                   NOTE_FS4, NOTE_D4, NOTE_FS4, NOTE_A4, 590, 0, 590, 640    
-                                                };
-                        const uint32_t durations[] = {150, 150, 150, 150, 400, 250, 20, 
-                                                      150, 150, 150, 150, 400, 250, 20, 
-                                                      150, 150, 150, 150, 400, 20, 380, 800 };
-                        buzzer_play_melody(melody, durations, 22);
-                    }
+                    printf("Playing Sound Effect 3...\r\n");
+                    buzzer_sound_effect_3();
                     printf("Done!\r\n");
-                    break;
-                    
-                case 's':
-                case 'S':
-                    printf("Playing melody...\r\n");
-                    {
-                        const uint32_t melody[] = { 330, 250};
-                        const uint32_t durations[] = {70, 90};
-                        buzzer_play_melody(melody, durations, 2);
-                    }
-                    printf("Done!\r\n");
-                    break;
-                    
-                case 'a':
-                case 'A':
-                    printf("Playing melody...\r\n");
-                    {
-                        const uint32_t melody[] = { NOTE_C4, NOTE_E4, NOTE_G4, NOTE_C5};
-                        const uint32_t durations[] = {200, 200, 200, 200};
-                        buzzer_play_melody(melody, durations, 4);
-                    }
-                    printf("Done!\r\n");
-                    break;
-                case 'd':
-                case 'D':
-                    printf("C5 (523 Hz)\r\n");
-                    buzzer_play_note(NOTE_F4, 300);
-                    break;
-                case 'g':
-                case 'G':
-                    printf("C5 (523 Hz)\r\n");
-                    buzzer_play_note(NOTE_GS4 , 300);
-                    break;
-                case 'j':
-                case 'J':
-                    printf("C5 (523 Hz)\r\n");
-                    buzzer_play_note(NOTE_C5 , 300);
-                    break;
-                case 'k':
-                case 'K':
-                    printf("C5 (523 Hz)\r\n");
-                    buzzer_play_note(NOTE_CS5, 300);
-                    break;
-
-                    
-                case 'x':
-                case 'X':
-                    printf("Error sound!\r\n");
-                    {
-                        const uint32_t error[] = {FREQ_HIGH, 0, FREQ_HIGH};
-                        const uint32_t durations[] = {100, 50, 100};
-                        buzzer_play_melody(error, durations, 3);
-                    }
                     break;
                 
                 // Volume control
@@ -305,10 +168,9 @@ int main() {
                 case 'h':
                 case 'H':
                     printf("\r\nCommands:\r\n");
-                    printf("  1-4: Different frequency beeps\r\n");
-                    printf("  q-i: Musical notes (C4-C5)\r\n");
-                    printf("  m: Play melody\r\n");
-                    printf("  s/a/x: Sound effects\r\n");
+                    printf("  1: Sound Effect 1\r\n");
+                    printf("  2: Sound Effect 2\r\n");
+                    printf("  3: Sound Effect 3\r\n");
                     printf("  +/-: Volume control\r\n");
                     printf("  o: ON, f: OFF\r\n\r\n");
                     break;

@@ -24,7 +24,13 @@ def main():
     
     # Setup
     setup_maps()
-    map_data = MapLoader.load_json("maps/forest.json")
+    
+    # Try to load forest.json, fallback to map1.json
+    try:
+        map_data = MapLoader.load_json("maps/forest.json")
+    except FileNotFoundError:
+        map_data = MapLoader.load_json("maps/map1.json")
+    
     matrix = LEDMatrixSimulator(64, 32, pixel_size=15)
     game = Game(matrix, map_data)
     
@@ -38,7 +44,10 @@ def main():
     print("  2 = Cannon ($50) - Splash damage, short range")
     print("  3 = Sniper ($65) - High damage, sees invisible")
     print("  4 = Radar ($40) - Reveals invisible enemies")
-    print("\nENEMIES:")
+    print("\nWAVE CONTROLS:")
+    print("  SPACE = Start next wave")
+    print("  M = Toggle auto-start waves")
+    print("\nMANUAL ENEMY SPAWNING (testing):")
     print("  Q = Scout (3 HP, normal speed)")
     print("  W = Tank (10 HP, slow, 2 damage)")
     print("  E = Splitter (2 HP, fast, splits into 2 scouts)")
@@ -46,17 +55,11 @@ def main():
     print("\nABILITIES:")
     print("  A = Apache Strike ($50)")
     print("  B = Bomber Run ($75)")
-    print("\nBANNER PLANE:")
-    print("  N = Spawn banner plane (for testing)")
-    print("      Format: 'WAVE X' where X is 0-9")
     print("\nOTHER:")
     print("  T = Toggle tower ranges")
     print("  Click = Place selected tower")
     print("  ESC = Quit")
     print("\n===============================\n")
-    
-    # For banner testing
-    current_test_wave = 1
     
     while running:
         dt = clock.get_time() / 1000.0
@@ -68,6 +71,18 @@ def main():
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     running = False
+                
+                # Wave controls
+                elif event.key == pygame.K_SPACE:
+                    if game.start_wave():
+                        wave_info = game.get_wave_info()
+                        print(f"Started Wave {wave_info['current']}/{wave_info['total']}")
+                    else:
+                        print("Cannot start wave (wave already active or game over)")
+                
+                elif event.key == pygame.K_m:
+                    game.wave_manager.auto_start = not game.wave_manager.auto_start
+                    print(f"Auto-start waves: {'ON' if game.wave_manager.auto_start else 'OFF'}")
                 
                 # Tower selection
                 elif event.key == pygame.K_1:
@@ -83,19 +98,19 @@ def main():
                     game.selected_tower_type = "radar"
                     print("Selected: Radar ($40)")
                 
-                # Enemy spawning
+                # Manual enemy spawning (for testing)
                 elif event.key == pygame.K_q:
                     game.spawn_enemy("scout")
-                    print("Spawned: Scout")
+                    print("Spawned: Scout (manual)")
                 elif event.key == pygame.K_w:
                     game.spawn_enemy("tank")
-                    print("Spawned: Tank")
+                    print("Spawned: Tank (manual)")
                 elif event.key == pygame.K_e:
                     game.spawn_enemy("splitter")
-                    print("Spawned: Splitter")
+                    print("Spawned: Splitter (manual)")
                 elif event.key == pygame.K_r:
                     game.spawn_enemy("ghost")
-                    print("Spawned: Ghost (invisible)")
+                    print("Spawned: Ghost (manual - invisible)")
                 
                 # Abilities
                 elif event.key == pygame.K_a:
@@ -108,14 +123,6 @@ def main():
                         print("Bomber Run activated!")
                     else:
                         print("Can't activate Bomber (cost: $75, cooldown or insufficient funds)")
-                
-                # Banner plane (testing)
-                elif event.key == pygame.K_n:
-                    game.spawn_banner_plane(current_test_wave)
-                    print(f"Banner plane spawned: WAVE {current_test_wave}")
-                    current_test_wave += 1
-                    if current_test_wave > 9:
-                        current_test_wave = 1
                 
                 # Toggle ranges
                 elif event.key == pygame.K_t:
@@ -135,17 +142,44 @@ def main():
         game.update(dt)
         game.draw()
         
+        # Get wave info for display
+        wave_info = game.get_wave_info()
+        wave_state = wave_info['state']
+        
+        # Build wave status string
+        if wave_state == 'waiting':
+            wave_status = "READY (Press SPACE)"
+        elif wave_state == 'wave_active':
+            wave_status = f"Wave {wave_info['current']}/{wave_info['total']}"
+        elif wave_state == 'wave_complete':
+            next_wave_time = wave_info['time_until_next']
+            if game.wave_manager.auto_start:
+                wave_status = f"Next: {next_wave_time:.1f}s"
+            else:
+                wave_status = "READY (Press SPACE)"
+        elif wave_state == 'game_won':
+            wave_status = "VICTORY!"
+        else:
+            wave_status = "---"
+        
         # Display game info in window title
         apache_cd = game.ability_manager.get_cooldown_remaining("apache", game.game_time)
         bomber_cd = game.ability_manager.get_cooldown_remaining("bomber", game.game_time)
         
         tower_type_name = game.selected_tower_type if game.selected_tower_type else "None"
         
-        banner_status = "FLYING" if (game.banner_plane and game.banner_plane.active) else "---"
+        banner_status = "✈" if (game.banner_plane and game.banner_plane.active) else ""
+        
+        game_status = ""
+        if game.game_over:
+            game_status = "GAME OVER | "
+        elif game.game_won:
+            game_status = "VICTORY! | "
         
         pygame.display.set_caption(
-            f"TD | ${game.money} | Lives:{game.lives} | Score:{game.score} | "
-            f"Selected:{tower_type_name} | Apache:{apache_cd:.1f}s | Bomber:{bomber_cd:.1f}s | Banner:{banner_status}"
+            f"TD | {game_status}${game.money} | ❤{game.lives} | Score:{game.score} | "
+            f"{wave_status} | Enemies:{len(game.enemies)} | "
+            f"Tower:{tower_type_name} | Apache:{apache_cd:.1f}s | Bomber:{bomber_cd:.1f}s {banner_status}"
         )
         
         if not matrix.update_display():

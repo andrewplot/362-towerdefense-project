@@ -7,6 +7,7 @@ from enemy import Enemy
 from tower import Tower
 from ability import AbilityManager
 from banner_plane import BannerPlane
+from wave_system import WaveManager
 import math
 
 
@@ -26,6 +27,7 @@ class Game:
         self.score = 0
         self.game_time = 0
         self.game_over = False
+        self.game_won = False
         
         # Tower placement state
         self.selected_tower_type = None
@@ -39,6 +41,11 @@ class Game:
         
         # Spawned enemies that need to be added (for splitters)
         self.pending_spawns = []
+        
+        # Wave system
+        self.wave_manager = WaveManager(map_data.waves)
+        self.wave_manager.auto_start = False  # Manual wave start by default
+        self.wave_manager.show_banner = True
     
     def spawn_enemy(self, enemy_type):
         """Spawn a new enemy"""
@@ -160,6 +167,15 @@ class Game:
         self.ability_manager.activate(ability_type, self.game_time, self.matrix.width, path_y)
         return True
     
+    def start_wave(self):
+        """
+        Manually start the next wave
+        
+        Returns:
+            bool: True if wave started successfully
+        """
+        return self.wave_manager.manual_start_wave(self)
+    
     def update_radar_detection(self):
         """Update which enemies are revealed by radar towers"""
         # Reset all revealed flags
@@ -180,10 +196,18 @@ class Game:
     
     def update(self, dt):
         """Update game state"""
-        if self.game_over:
+        if self.game_over or self.game_won:
             return
         
         self.game_time += dt
+        
+        # Update wave system
+        self.wave_manager.update(dt, self)
+        
+        # Check for game won condition
+        if self.wave_manager.is_game_won():
+            self.game_won = True
+            return
         
         # Update banner plane
         if self.banner_plane and self.banner_plane.active:
@@ -255,3 +279,7 @@ class Game:
         if self.selected_tower_type:
             return self.place_tower(self.selected_tower_type, matrix_x, matrix_y)
         return False
+    
+    def get_wave_info(self):
+        """Get current wave information for UI"""
+        return self.wave_manager.get_wave_info()

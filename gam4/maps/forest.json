@@ -12,14 +12,54 @@
   "towers": [
     [10, 5],
     [10, 25],
-    [40, 15]
+    [40, 15],
+    [50, 10],
+    [50, 26]
   ],
-"decorations": [
+  "decorations": [
     {"type": "tree", "x": 30, "y": 5},
+    {"type": "tree", "x": 55, "y": 5},
+    {"type": "tree", "x": 55, "y": 28},
     {"type": "rock", "x": 20, "y": 28},
     {"type": "lake", "x": 45, "y": 8}
   ],
   "spawn": [63, 20],
   "end": [0, 10],
-  "waves": [3, 5, 8, 10]
+  "waves": [
+    {
+      "enemies": ["scout", "scout", "scout", "scout", "scout"],
+      "spawn_interval": 1.5,
+      "reward_multiplier": 1.0
+    },
+    {
+      "enemies": ["scout", "scout", "scout", "tank", "tank"],
+      "spawn_interval": 1.2,
+      "reward_multiplier": 1.0
+    },
+    {
+      "enemies": ["scout", "scout", "splitter", "splitter", "tank", "tank"],
+      "spawn_interval": 1.0,
+      "reward_multiplier": 1.0
+    },
+    {
+      "enemies": ["tank", "tank", "tank", "scout", "scout", "scout", "ghost", "ghost"],
+      "spawn_interval": 1.0,
+      "reward_multiplier": 1.2
+    },
+    {
+      "enemies": ["splitter", "splitter", "splitter", "tank", "tank", "tank", "ghost", "ghost", "ghost"],
+      "spawn_interval": 0.8,
+      "reward_multiplier": 1.2
+    },
+    {
+      "enemies": ["tank", "tank", "tank", "tank", "ghost", "ghost", "ghost", "ghost", "splitter", "splitter", "splitter", "splitter"],
+      "spawn_interval": 0.7,
+      "reward_multiplier": 1.5
+    },
+    {
+      "enemies": ["tank", "ghost", "tank", "ghost", "splitter", "tank", "ghost", "splitter", "tank", "ghost", "splitter", "splitter", "tank", "ghost", "ghost"],
+      "spawn_interval": 0.6,
+      "reward_multiplier": 1.5
+    }
+  ]
 }

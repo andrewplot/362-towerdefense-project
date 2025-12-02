@@ -17,7 +17,7 @@ class MapData:
         self.tower_slots = []  # List of (x, y) tuples for tower placement
         self.spawn_point = (0, 0)  # Where enemies spawn
         self.end_point = (0, 0)  # Where enemies exit
-        self.waves = []  # Number of enemies per wave
+        self.waves = []  # List of wave definitions (dicts)
         self.decorations = []  # List of decorations (trees, rocks, etc)
         self.background_color = (0, 50, 0)  # Default dark green
     
@@ -55,8 +55,10 @@ class MapLoader:
         map_data.tower_slots = [tuple(t) for t in data.get("towers", [])]
         map_data.spawn_point = tuple(data.get("spawn", [0, 0]))
         map_data.end_point = tuple(data.get("end", [63, 31]))
-        map_data.waves = data.get("waves", [5, 8, 12])
         map_data.decorations = data.get("decorations", [])
+        
+        # Load wave definitions
+        map_data.waves = data.get("waves", [])
         
         # Load background color if specified
         bg = data.get("background_color", [0, 50, 0])
@@ -118,7 +120,40 @@ def create_sample_maps():
     
     map1.spawn_point = (63, 15)
     map1.end_point = (0, 20)
-    map1.waves = [5, 8, 10, 12, 15, 20]
+    
+    # Wave definitions with enemy types and spawn intervals
+    map1.waves = [
+        {
+            "enemies": ["scout"] * 5,
+            "spawn_interval": 1.0,
+            "reward_multiplier": 1.0
+        },
+        {
+            "enemies": ["scout"] * 3 + ["tank"] * 2,
+            "spawn_interval": 1.2,
+            "reward_multiplier": 1.0
+        },
+        {
+            "enemies": ["scout"] * 4 + ["splitter"] * 2 + ["tank"],
+            "spawn_interval": 1.0,
+            "reward_multiplier": 1.0
+        },
+        {
+            "enemies": ["tank"] * 3 + ["scout"] * 5 + ["ghost"] * 2,
+            "spawn_interval": 0.8,
+            "reward_multiplier": 1.2
+        },
+        {
+            "enemies": ["splitter"] * 4 + ["tank"] * 4 + ["ghost"] * 3,
+            "spawn_interval": 0.8,
+            "reward_multiplier": 1.2
+        },
+        {
+            "enemies": ["tank"] * 5 + ["ghost"] * 5 + ["splitter"] * 5,
+            "spawn_interval": 0.6,
+            "reward_multiplier": 1.5
+        }
+    ]
     
     # Add tree decorations
     map1.decorations = [
@@ -145,7 +180,30 @@ def create_sample_maps():
     ]
     map2.spawn_point = (63, 16)
     map2.end_point = (0, 16)
-    map2.waves = [3, 5, 8, 12, 15]
+    
+    # Desert waves - faster paced
+    map2.waves = [
+        {
+            "enemies": ["scout"] * 8,
+            "spawn_interval": 0.7,
+            "reward_multiplier": 1.0
+        },
+        {
+            "enemies": ["scout"] * 5 + ["tank"] * 3,
+            "spawn_interval": 0.8,
+            "reward_multiplier": 1.0
+        },
+        {
+            "enemies": ["splitter"] * 6 + ["tank"] * 4,
+            "spawn_interval": 0.6,
+            "reward_multiplier": 1.2
+        },
+        {
+            "enemies": ["ghost"] * 8 + ["tank"] * 6,
+            "spawn_interval": 0.5,
+            "reward_multiplier": 1.5
+        }
+    ]
     
     # Add rocks for desert theme
     map2.decorations = [

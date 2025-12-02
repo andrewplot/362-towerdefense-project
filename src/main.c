@@ -105,7 +105,7 @@ int main() {
     
     printf("Ready! Press a key...\r\n");
     
-    uint8_t volume = 100;  // Current volume level
+    uint8_t volume = 90;  // Current volume level
     
     while (1) {
         // Check if a character is available

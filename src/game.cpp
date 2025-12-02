@@ -1,8 +1,9 @@
 // game.cpp - Core game implementation
 #include "game_types.h"
-#include "../lib/matrix/matrix.h"
+
 #include <math.h>
 #include <string.h>
+#include <stdio.h>
 
 // ============================================================================
 // ENEMY STATS TABLE (replaces Python ENEMY_TYPES dict)

@@ -2,11 +2,11 @@
 #define TOWER_HH
 
 enum TowerType {
-    dart,
-    ninja,
-    bomb,
-    sniper,
-    blank,
+    MACHINE_GUN,
+    CANNON,
+    SNIPER,
+    RADAR,
+    BLANK,
 
     TOWER_TYPE_COUNT
 };

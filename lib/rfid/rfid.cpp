@@ -13,10 +13,10 @@ uint8_t uid_len;
 
 TowerType match_monkey(uint8_t rfid_tag[10]) {
     switch (rfid_tag[1]) {
-        case 0xC7: return dart;
-        case 0x76: return ninja;
-        case 0x35: return bomb;
-        case 0xD7: return sniper;
+        case 0xC7: return MACHINE_GUN;
+        case 0x76: return CANNON;
+        case 0x35: return SNIPER;
+        case 0xD7: return RADAR;
     }
 }
 

@@ -1,4 +1,4 @@
-#include "buzzer_pwm.h"
+#include "buzzer_pwm.hh"
 #include "pico/stdlib.h"
 #include "hardware/pwm.h"
 #include "hardware/clocks.h"
@@ -130,7 +130,7 @@ void buzzer_set_volume(uint8_t duty) {
 
 void buzzer_sound_effect_1(void) {
     // Victory
-    const uint32_t melody[] = {NOTE_E4, NOTE_C4, NOTE_E4, NOTE_G4, NOTE_C5};
+    const uint32_t melody[] = {NOTE_E5, NOTE_C5, NOTE_E5, NOTE_G5, NOTE_C6};
     const uint32_t durations[] = {150, 150, 150, 150, 400};
     buzzer_play_melody(melody, durations, 5);
 }
@@ -150,13 +150,15 @@ void buzzer_sound_effect_3(void) {
 }
 
 void buzzer_sound_effect_4(void){
-    const uint32_t lose[] = {NOTE_B4, NOTE_A4S, NOTE_G4S};
+    //Lose Sound
+    const uint32_t lose[] = {NOTE_B5, NOTE_A5S, NOTE_G5S};
     const uint32_t durations[] = {300, 300, 600};
     buzzer_play_melody(lose, durations, 3);
 }
 
 void buzzer_sound_effect_5(void){
-    const uint32_t error[] = {NOTE_D4, 0, NOTE_D4, 0, NOTE_D4, NOTE_G4, 0, NOTE_G4, 0, NOTE_G4};
+    //Wave Start
+    const uint32_t error[] = {NOTE_D5, 0, NOTE_D5, 0, NOTE_D5, NOTE_G5, 0, NOTE_G5, 0, NOTE_G5};
     const uint32_t durations[] = {300, 50, 100, 30, 100, 500, 100, 50, 50, 50};
     buzzer_play_melody(error, durations, 10); 
 }

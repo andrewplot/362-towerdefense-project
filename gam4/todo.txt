@@ -1,10 +1,16 @@
 development stages:
-    fix banner plane
+    fix banner plane DONE 
+    delay wave manager to be after banner plane
+    fix radar
     place towers anywhere
     design towers
-    add wave management
     work on balancing
     add tower upgrades
+
+
+
+
+    
 
 
 

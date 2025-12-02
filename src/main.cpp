@@ -50,6 +50,7 @@ void sample_peripherals() {
 void init_peripherals() {
     init_rfid();
     init_joystick();
+    init_oled();
 }
 
 void render_matrix() {
@@ -64,7 +65,8 @@ int main() {
     // Give time for USB serial to connect
     sleep_ms(3000);
     init_peripherals();
-
+    
+    oled_print("Hello \1", "I have mucho \2");
     for (;;) {
         sample_peripherals();
 

@@ -18,7 +18,12 @@
 void init_matrix();
 
 /**
- * @brief infinitely renders frames
+ * @brief swaps framebuffers for double buffering
+ */
+void swap_frames();
+
+/**
+ * @brief renders one frame
  */
 void render_frame();
 
@@ -54,9 +59,9 @@ void set_tree(int x, int y);
 /**
  * @brief set pixel to 'color' at pos (x, y)
  * 
- * @param x top left x value of tree
- * @param y top left y value of tree
- * @param color color to set the pixel to
+ * @param x x value
+ * @param y y value
+ * @param color color of pixel
  */
 void set_pixel(int x, int y, Color color);
 

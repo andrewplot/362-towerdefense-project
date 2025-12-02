@@ -12,7 +12,9 @@
 #define MATRIX_COLS 64
 #define GAMMA 2.9
 
-Color framebuffer[MATRIX_ROWS][MATRIX_COLS];
+Color frames[2][MATRIX_ROWS][MATRIX_COLS];
+int frame_index = 0;
+
 static uint8_t gamma_lut[256];
 
 static inline void my_gpio_put(uint pin, bool val) {
@@ -51,10 +53,12 @@ void init_matrix_pins() {
     sio_hw->gpio_clr = 0xFFFE0;
 }
 
-void init_framebuffer(Color color) {
+void init_framebuffers(Color color) {
     for (int row = 0; row < MATRIX_ROWS; row++) {
         for (int col = 0; col < MATRIX_COLS; col++) {
-            framebuffer[row][col] = color;
+            frames[0][row][col] = color;
+            frames[1][row][col] = color;
+
         }
     }
 }
@@ -68,8 +72,12 @@ void init_gamma_lut() {
 
 void init_matrix() {
     init_matrix_pins();
-    init_framebuffer(GRASS);
+    init_framebuffers(GRASS);
     init_gamma_lut();
+}
+
+void swap_frames() {
+    frame_index = !frame_index;
 }
 
 void reset_row_sel() {
@@ -79,8 +87,8 @@ void reset_row_sel() {
 }
 
 void set_rgb_pins(int row, int col, int plane) {
-    Color top = framebuffer[row][col];
-    Color bottom = framebuffer[row+16][col];
+    Color top = frames[!frame_index][row][col];
+    Color bottom = frames[!frame_index][row+16][col];
 
     uint8_t top_r = gamma_lut[top.r];
     uint8_t top_g = gamma_lut[top.g];
@@ -130,7 +138,7 @@ void set_towers(Tower* towers) {
 
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 3; col++) {
-                framebuffer[row + tower.x_pos][col + tower.y_pos] = sprite[row * 3 + col];
+                frames[frame_index][row + tower.x_pos][col + tower.y_pos] = sprite[row * 3 + col];
             }
         }
     }
@@ -141,53 +149,53 @@ void set_tower(Tower tower) {
 
     for (int row = 0; row < 3; row++) {
         for (int col = 0; col < 3; col++) {
-            framebuffer[row + tower.x_pos][col + tower.y_pos] = sprite[row * 3 + col];
+            frames[frame_index][row + tower.x_pos][col + tower.y_pos] = sprite[row * 3 + col];
             }
     }
 }
 
 void set_path() {
     for (int col = 0; col < 18; col++) {
-        framebuffer[14][col] = PATH;
-        framebuffer[15][col] = PATH;
-        framebuffer[16][col] = PATH;
+        frames[frame_index][14][col] = PATH;
+        frames[frame_index][15][col] = PATH;
+        frames[frame_index][16][col] = PATH;
     }
 
     for (int row = 5; row < 17; row++) {
-        framebuffer[row][16] = PATH;
-        framebuffer[row][17] = PATH;
-        framebuffer[row][18] = PATH;
+        frames[frame_index][row][16] = PATH;
+        frames[frame_index][row][17] = PATH;
+        frames[frame_index][row][18] = PATH;
     }
     
     for (int col = 16; col < 33; col++) {
-        framebuffer[5][col] = PATH;
-        framebuffer[6][col] = PATH;
-        framebuffer[7][col] = PATH;
+        frames[frame_index][5][col] = PATH;
+        frames[frame_index][6][col] = PATH;
+        frames[frame_index][7][col] = PATH;
 
     }
 
     for (int row = 5; row < 27; row++) {
-        framebuffer[row][30] = PATH;
-        framebuffer[row][31] = PATH;
-        framebuffer[row][32] = PATH;
+        frames[frame_index][row][30] = PATH;
+        frames[frame_index][row][31] = PATH;
+        frames[frame_index][row][32] = PATH;
     }
 
     for (int col = 33; col < 49; col++) {
-        framebuffer[24][col] = PATH;
-        framebuffer[25][col] = PATH;
-        framebuffer[26][col] = PATH;
+        frames[frame_index][24][col] = PATH;
+        frames[frame_index][25][col] = PATH;
+        frames[frame_index][26][col] = PATH;
     }
     
     for (int row = 14; row < 27; row++) {
-        framebuffer[row][46] = PATH;
-        framebuffer[row][47] = PATH;
-        framebuffer[row][48] = PATH;
+        frames[frame_index][row][46] = PATH;
+        frames[frame_index][row][47] = PATH;
+        frames[frame_index][row][48] = PATH;
     }
 
     for (int col = 46; col < 64; col++) {
-        framebuffer[14][col] = PATH;
-        framebuffer[15][col] = PATH;
-        framebuffer[16][col] = PATH;
+        frames[frame_index][14][col] = PATH;
+        frames[frame_index][15][col] = PATH;
+        frames[frame_index][16][col] = PATH;
     }
 }
 
@@ -196,11 +204,11 @@ void set_tree(int x, int y) {
 
     for (int row = 0; row < 5; row++) {
         for (int col = 0; col < 3; col++) {
-            framebuffer[row + y][col + x] = sprite[row * 3 + col];
+            frames[frame_index][row + y][col + x] = sprite[row * 3 + col];
         }
     }
 }
 
 void set_pixel(int x, int y, Color color) {
-    framebuffer[y][x] = color;
+    frames[frame_index][y][x] = color;
 }

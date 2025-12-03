@@ -5,6 +5,8 @@
 #include <string.h>
 #include <stdio.h>
 
+#include "matrix.hh"
+
 // ============================================================================
 // ENEMY STATS TABLE (replaces Python ENEMY_TYPES dict)
 // ============================================================================
@@ -207,9 +209,11 @@ void enemy_draw(const Enemy* enemy) {
     // Ghost enemies are barely visible
     if (enemy->invisible && !enemy->revealed) {
         Color ghost_color = {enemy->color.r / 8, enemy->color.g / 8, enemy->color.b / 4};
-        framebuffer[y][x] = ghost_color;
+        //framebuffer[y][x] = ghost_color;
+        set_pixel(x, y, ghost_color);
     } else {
-        framebuffer[y][x] = enemy->color;
+        //framebuffer[y][x] = enemy->color;
+        set_pixel(x, y, enemy->color);
     }
 }
 
@@ -316,7 +320,8 @@ void tower_draw(const Tower* tower) {
             int px = x + dx;
             int py = y + dy;
             if (px >= 0 && px < MATRIX_WIDTH && py >= 0 && py < MATRIX_HEIGHT) {
-                framebuffer[py][px] = tower->color;
+                // framebuffer[py][px] = tower->color;
+                set_pixel(px, py, tower->color);
             }
         }
     }
@@ -325,7 +330,9 @@ void tower_draw(const Tower* tower) {
         int tip_x = x + (int)(cosf(tower->radar_angle) * 3.0f);
         int tip_y = y + (int)(sinf(tower->radar_angle) * 3.0f);
         if (tip_x >= 0 && tip_x < MATRIX_WIDTH && tip_y >= 0 && tip_y < MATRIX_HEIGHT) {
-            framebuffer[tip_y][tip_x] = Color{0, 255, 255};
+            //framebuffer[tip_y][tip_x] = Color{0, 255, 255};
+            set_pixel(tip_x, tip_y, Color(0, 255, 255));
+
         }
     }
 }
@@ -409,7 +416,8 @@ void projectile_draw(const Projectile* proj) {
     int y = (int)proj->y;
 
     if (x >= 0 && x < MATRIX_WIDTH && y >= 0 && y < MATRIX_HEIGHT) {
-        framebuffer[y][x] = proj->color;
+        //framebuffer[y][x] = proj->color;
+        set_pixel(x, y, proj->color);
     }
 }
 
@@ -532,7 +540,8 @@ void game_draw(const GameState* game) {
         int x = game->path[i].x;
         int y = game->path[i].y;
         if (x >= 0 && x < MATRIX_WIDTH && y >= 0 && y < MATRIX_HEIGHT) {
-            framebuffer[y][x] = Color{100, 100, 100};
+            //framebuffer[y][x] = Color{100, 100, 100};
+            set_pixel(x, y, Color(100,100,100));
         }
     }
 
@@ -549,6 +558,7 @@ void game_draw(const GameState* game) {
                 int py = y + dy;
                 if (px >= 0 && px < MATRIX_WIDTH && py >= 0 && py < MATRIX_HEIGHT) {
                     framebuffer[py][px] = slot_color;
+                    set_pixel(px, py, slot_color);
                 }
             }
         }

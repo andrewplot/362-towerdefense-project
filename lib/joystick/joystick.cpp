@@ -2,7 +2,7 @@
 #include "pico/stdlib.h"
 #include "hardware/adc.h"
 #include "hardware/gpio.h"
-#include "../pin-definitions.hh"
+#include "../pins/pin-definitions.hh"
 
 #include "joystick.hh"
 

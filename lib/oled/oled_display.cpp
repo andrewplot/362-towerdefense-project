@@ -4,7 +4,7 @@
 #include "hardware/dma.h"
 #include "hardware/gpio.h"
 #include "oled_display.hh"
-#include "../pin-definitions.hh"
+#include "../pins/pin-definitions.hh"
 
 static const uint8_t heart[8] = {
     0b00000,

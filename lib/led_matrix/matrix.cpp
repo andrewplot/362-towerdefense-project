@@ -5,7 +5,7 @@
 #include "pico/stdlib.h"
 
 #include "sprites.hh"
-#include "../pin-definitions.hh"
+#include "../pins/pin-definitions.hh"
 
 
 #define MATRIX_ROWS 32
@@ -39,8 +39,8 @@ static inline void pulse_pin(int pin, int loops) {
 }
 
 void init_matrix_pins() {
-    gpio_init(25);
-    gpio_set_dir(25, true);
+    // gpio_init(25);
+    // gpio_set_dir(25, true);
 
     for (int pin = 5; pin < 20; pin++) {
         if (pin == 8) continue;
@@ -128,29 +128,6 @@ void render_frame() {
             
             sleep_us(12 * (1 << plane));
         }
-    }
-}
-
-void set_towers(Tower* towers) {
-    for (int i = 0; i < 13; i++) {
-        Tower tower = towers[i];
-        const Color* sprite = get_sprite(tower.type);
-
-        for (int row = 0; row < 3; row++) {
-            for (int col = 0; col < 3; col++) {
-                frames[frame_index][row + tower.x_pos][col + tower.y_pos] = sprite[row * 3 + col];
-            }
-        }
-    }
-}
-
-void set_tower(Tower tower) {
-    const Color* sprite = get_sprite(tower.type);
-
-    for (int row = 0; row < 3; row++) {
-        for (int col = 0; col < 3; col++) {
-            frames[frame_index][row + tower.x_pos][col + tower.y_pos] = sprite[row * 3 + col];
-            }
     }
 }
 

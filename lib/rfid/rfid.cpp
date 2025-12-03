@@ -4,6 +4,7 @@
 
 #include "rfid.hh"
 #include "rfid_reader_uart.hh"
+#include "buzzer_pwm.hh"
 
 #define RFID_TIMER_MS 1000
 
@@ -45,10 +46,11 @@ void init_rfid() {
 TowerType sample_rfid() {
     if (pn532_uart_read_uid(uid, &uid_len)) {
         printf("Tag scanned\n");
+        victory_sound();
         return match_monkey(uid);
     } else {
         printf("No tag\n");
-        return blank;
+        return BLANK;
     }
 }
 

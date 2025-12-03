@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include "pico/stdlib.h"
-#include "buzzer_pwm.h"
+#include "buzzer_pwm.hh"
 
 // Buzzer GPIO pin configuration
 #define BUZZER_PIN 15  // Change this to whatever pin your buzzer is connected to

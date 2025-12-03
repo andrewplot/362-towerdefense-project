@@ -40,5 +40,7 @@
 #define LED_G        46
 #define LED_B        45
 
+#define BUZZER_PIN 28
+
 
 #endif

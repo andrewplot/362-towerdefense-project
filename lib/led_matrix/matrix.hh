@@ -1,7 +1,6 @@
 #ifndef MATRIX_H
 #define MATRIX_H
 
-#include "../tower/tower.hh"
 #include "color.hh"
 
 
@@ -26,20 +25,6 @@ void swap_frames();
  * @brief renders one frame
  */
 void render_frame();
-
-/**
- * @brief adds all towers to framebuffer at repective (x, y)
- * 
- * @param towers pointer to first element of Tower array
- */
-void set_towers(Tower* towers);
-
-/**
- * @brief adds single tower to framebuffer at respective (x, y)
- * 
- * @param towers pointer to first element of Tower array
- */
-void set_tower(Tower tower);
 
 /**
  * @brief adds predefined path to framebuffer

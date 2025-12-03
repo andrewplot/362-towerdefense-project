@@ -39,9 +39,6 @@ static inline void pulse_pin(int pin, int loops) {
 }
 
 void init_matrix_pins() {
-    gpio_init(25);
-    gpio_set_dir(25, true);
-
     for (int pin = 5; pin < 20; pin++) {
         if (pin == 8) continue;
 
